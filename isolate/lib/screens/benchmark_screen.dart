@@ -129,7 +129,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
     setState(() {
       _isProcessing = true;
       _progress = 0.0;
-      _statusMessage = 'Khởi tạo Isolate.spawn và lắng nghe qua ReceivePort...';
+      _statusMessage = 'Đang xử lý: 0%';
     });
 
     try {
@@ -141,7 +141,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
           if (mounted) {
             setState(() {
               _progress = prog;
-              // stream update: live progress
+              _statusMessage = msg;
             });
           }
         },
@@ -206,7 +206,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'BƯỚC 1: MỨC TẢI CPU & DỮ LIỆU (Mức ${_cpuIntensity}x = ${_cpuIntensity * 60000} bản ghi ~ $estimatedMB MB)',
+                          'BƯỚC 1: MỨC TẢI DỮ LIỆU (${_cpuIntensity}x ~ $estimatedMB MB)',
                           style: const TextStyle(
                             color: Colors.cyanAccent,
                             fontWeight: FontWeight.bold,
@@ -254,7 +254,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'BƯỚC 2: CHẠY SO SÁNH (MAIN THREAD VS ISOLATES)',
+                      'BƯỚC 2: THỰC THI BENCHMARK',
                       style: TextStyle(
                         color: Colors.cyanAccent,
                         fontWeight: FontWeight.bold,
@@ -274,7 +274,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
                               padding: const EdgeInsets.symmetric(vertical: 16),
                             ),
                             child: const Text(
-                              '1. Chạy trên Main Thread\n(Đơ cứng UI - Tụt FPS về 0)',
+                              '1. Main Thread',
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -291,7 +291,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
                               padding: const EdgeInsets.symmetric(vertical: 16),
                             ),
                             child: const Text(
-                              '2. Chạy với hàm compute()\n(Tách luồng nhanh - Mượt)',
+                              '2. compute()',
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -308,7 +308,7 @@ class _BenchmarkScreenState extends State<BenchmarkScreen> {
                               padding: const EdgeInsets.symmetric(vertical: 16),
                             ),
                             child: const Text(
-                              '3. Isolate.spawn + SendPort\n(Truyền % tiến độ Real-time)',
+                              '3. Isolate.spawn',
                               textAlign: TextAlign.center,
                             ),
                           ),
