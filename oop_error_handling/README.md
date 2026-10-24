@@ -22,6 +22,7 @@
 4. [Hướng dẫn cài đặt & Cấu hình môi trường](#4-hướng-dẫn-cài-đặt--cấu-hình-môi-trường)
 5. [Phân chia công việc (Work Breakdown Structure - WBS)](#5-phân-chia-công-việc-work-breakdown-structure---wbs)
 6. [Kịch bản thực nghiệm, Bảng ca kiểm thử Live Demo & Đánh giá hiệu quả](#6-kịch-bản-thực-nghiệm-bảng-ca-kiểm-thử-live-demo--đánh-giá-hiệu-quả)
+7. [Bộ Slide thuyết trình báo cáo (Beamer Presentation Slides)](#7-bộ-slide-thuyết-trình-báo-cáo-beamer-presentation-slides)
 
 ---
 
@@ -100,7 +101,7 @@ class BookingModel {
 mixin ValidationAndLogMixin {
   void validateTicketCount(int count) {
     if (count <= 0) {
-      throw const BusinessException('Số lượng vé phải lớn hơn 0');
+      throw const BusinessLogicException('Số lượng vé phải lớn hơn 0');
     }
   }
 
@@ -163,7 +164,7 @@ switch (result) {
                        ▲
       ┌────────────────┼────────────────┬────────────────┐
       │ extends        │ extends        │ extends        │ extends
-NetworkException DataFormatException BusinessException UnknownException
+NetworkException DataFormatException BusinessLogicException UnknownException
  [NET_ERR]        [PARSE_ERR]      [BIZ_ERR]        [UNKNOWN_ERR]
 ```
 
@@ -191,7 +192,7 @@ Future<Result<T>> errorWrapper<T>(Future<T> Function() action) async {
 ##### Ma trận điều phối và ánh xạ thông báo:
 | NGUYÊN NHÂN SỰ CỐ | PHÂN LOẠI NGOẠI LỆ | MÃ LỖI | THÔNG BÁO THÂN THIỆN TRÊN UI |
 |:---|:---|:---:|:---|
-| Số vé $\le 0$ / Vượt quá số ghế | `BusinessException` | `[BIZ_ERR]` | *"Số lượng vé phải lớn hơn 0"* / *"Không đủ vé tại phòng lab..."* |
+| Số vé $\le 0$ / Vượt quá số ghế | `BusinessLogicException` | `[BIZ_ERR]` | *"Số lượng vé phải lớn hơn 0"* / *"Không đủ vé tại phòng lab..."* |
 | Mất mạng / Timeout máy chủ | `NetworkException` | `[NET_ERR]` | *"Mất kết nối tới máy chủ xác thực đặc quyền..."* |
 | Dữ liệu JSON sai format/thiếu id | `DataFormatException` | `[PARSE_ERR]` | *"Dữ liệu máy chủ bị lỗi"* |
 | Sự cố hệ thống bất ngờ khác | `UnknownException` | `[UNKNOWN_ERR]` | *"Đã có lỗi xảy ra trong quá trình xử lý, vui lòng thử lại"* |
@@ -255,12 +256,15 @@ cross-platform/
 └── oop_error_handling/                    # Chuyên đề 01: OOP nâng cao & Xử lý ngoại lệ tập trung
     ├── assets/
     │   └── images/
-    │       ├── architecture_diagram.png   # Sơ đồ kiến trúc 3 tầng và các module
+    │       ├── architecture_diagram.png   # Sơ đồ kiến trúc phân tầng giải pháp
     │       ├── data_flow_swimlanes.png    # Sơ đồ luồng dữ liệu 4 làn dọc
     │       ├── app_full_screen.png        # Ảnh chụp toàn bộ giao diện ứng dụng thực tế
     │       ├── app_dual_proof.png         # Minh chứng đối sánh Banner và Console
     │       ├── app_banner.png             # Ảnh phóng to Banner thông báo lỗi UI
-    │       └── app_console_log.png        # Ảnh phóng to Terminal Console nhật ký lỗi
+    │       ├── app_console_log.png        # Ảnh phóng to Terminal Console nhật ký lỗi
+    │       └── slides/                    # Bộ 19 ảnh slide thuyết trình xuất từ XeLaTeX (PNG)
+    │           ├── slide_01.png
+    │           └── ... (slide_02.png -> slide_19.png)
     ├── docs/
     │   ├── slide_oop_error_handling.pdf   # Slide báo cáo thuyết trình chuẩn 19 trang (XeLaTeX)
     │   └── slide_oop_error_handling.tex   # Mã nguồn LaTeX thiết kế slide Beamer
@@ -403,3 +407,69 @@ flutter build apk --release
 1. **Loại bỏ hoàn toàn sự cố sập ứng dụng (Zero-Crash Guarantee):** Nhờ cơ chế phối hợp giữa `errorWrapper<T>` ở tầng dữ liệu và Lưới an toàn toàn cục 2 lớp (`FlutterError.onError` + `PlatformDispatcher.onError`), 100% các ngoại lệ dự đoán trước lẫn các lỗi hệ thống bất ngờ đều bị chặn đứng, hoàn toàn không xảy ra tình trạng crash app.
 2. **Tách biệt hoàn toàn trải nghiệm người dùng và thông tin gỡ lỗi kỹ thuật:** Người dùng phổ thông chỉ nhìn thấy các thông điệp tiếng Việt lịch sự, dễ hiểu trên UI Banner. Trong khi đó, toàn bộ vết ngăn xếp (`StackTrace`) và mã lỗi kỹ thuật chuẩn hóa (`[NET_ERR]`, `[PARSE_ERR]`, `[BIZ_ERR]`) được gom tập trung và hiển thị tại khối Terminal Console phục vụ đội ngũ kỹ sư vận hành.
 3. **Mã nguồn sạch và tuân thủ tuyệt đối quy chuẩn:** Dự án vượt qua kiểm tra nghiêm ngặt của bộ công cụ phân tích tĩnh với kết quả **`flutter analyze: No issues found!` (0 lỗi, 0 cảnh báo)**, đảm bảo tiêu chuẩn cao nhất về khả năng bảo trì, mở rộng và bàn giao sản phẩm.
+
+---
+
+## 7. BỘ SLIDE THUYẾT TRÌNH BÁO CÁO (BEAMER PRESENTATION SLIDES)
+
+* **Tài liệu PDF gốc (19 trang chuẩn XeLaTeX):** [`docs/slide_oop_error_handling.pdf`](docs/slide_oop_error_handling.pdf)
+* **Mã nguồn LaTeX thiết kế slide Beamer:** [`docs/slide_oop_error_handling.tex`](docs/slide_oop_error_handling.tex)
+* **Công cụ biên dịch:** XeLaTeX (TeX Live / MiKTeX), phông chữ hệ thống tiêu chuẩn Arial & Consolas, tỷ lệ khung hình 16:9 widescreen.
+
+---
+
+### 7.1. Trang bìa, Mục lục & Đặt vấn đề (Slides 01 – 03)
+
+| Slide 01: Trang bìa chính thức | Slide 02: Mục lục nội dung báo cáo |
+| :---: | :---: |
+| <img src="./assets/images/slides/slide_01.png" width="450" alt="Slide 01"/> | <img src="./assets/images/slides/slide_02.png" width="450" alt="Slide 02"/> |
+
+| Slide 03: Đặt vấn đề & Bảng phân công WBS | |
+| :---: | :---: |
+| <img src="./assets/images/slides/slide_03.png" width="450" alt="Slide 03"/> | |
+
+---
+
+### 7.2. Phần I: Nền tảng OOP nâng cao trong Dart (Slides 04 – 09)
+*Người trình bày: **Lê Anh Khoa***
+
+| Slide 04: Bốn trụ cột OOP & Lớp bất biến | Slide 05: Named & Redirecting Factory Constructor |
+| :---: | :---: |
+| <img src="./assets/images/slides/slide_04.png" width="450" alt="Slide 04"/> | <img src="./assets/images/slides/slide_05.png" width="450" alt="Slide 05"/> |
+
+| Slide 06: Factory Constructor & Bảng đối sánh | Slide 07: Mixin, Linearization & Từ khóa with |
+| :---: | :---: |
+| <img src="./assets/images/slides/slide_06.png" width="450" alt="Slide 06"/> | <img src="./assets/images/slides/slide_07.png" width="450" alt="Slide 07"/> |
+
+| Slide 08: Generics, Reified & Bounded Type | Slide 09: Sealed Class & Pattern Matching Dart 3 |
+| :---: | :---: |
+| <img src="./assets/images/slides/slide_08.png" width="450" alt="Slide 08"/> | <img src="./assets/images/slides/slide_09.png" width="450" alt="Slide 09"/> |
+
+---
+
+### 7.3. Phần II: Xử lý ngoại lệ, Kiến trúc & Live Demo (Slides 10 – 17)
+*Người trình bày: **Ngô Quang Thế***
+
+| Slide 10: Exception vs Error, rethrow & StackTrace | Slide 11: Cây phân cấp Custom Exception |
+| :---: | :---: |
+| <img src="./assets/images/slides/slide_10.png" width="450" alt="Slide 10"/> | <img src="./assets/images/slides/slide_11.png" width="450" alt="Slide 11"/> |
+
+| Slide 12: Hàm bao bọc errorWrapper & Result Pattern | Slide 13: Lưới an toàn toàn cục (Global Safety Net) |
+| :---: | :---: |
+| <img src="./assets/images/slides/slide_12.png" width="450" alt="Slide 12"/> | <img src="./assets/images/slides/slide_13.png" width="450" alt="Slide 13"/> |
+
+| Slide 14: Kiến trúc Phân tầng & Chống Race Condition | Slide 15: Sơ đồ Luồng dữ liệu (Data Flow Pipeline) |
+| :---: | :---: |
+| <img src="./assets/images/slides/slide_14.png" width="450" alt="Slide 14"/> | <img src="./assets/images/slides/slide_15.png" width="450" alt="Slide 15"/> |
+
+| Slide 16: Kịch bản Thực nghiệm & Ca kiểm thử Live Demo | Slide 17: Minh chứng Thực nghiệm Giao diện ứng dụng |
+| :---: | :---: |
+| <img src="./assets/images/slides/slide_16.png" width="450" alt="Slide 16"/> | <img src="./assets/images/slides/slide_17.png" width="450" alt="Slide 17"/> |
+
+---
+
+### 7.4. Tổng kết đề tài & Phiên hỏi đáp Q&A (Slides 18 – 19)
+
+| Slide 18: Kết quả đạt được & Hướng phát triển | Slide 19: Lời cảm ơn & Phiên thảo luận Q&A |
+| :---: | :---: |
+| <img src="./assets/images/slides/slide_18.png" width="450" alt="Slide 18"/> | <img src="./assets/images/slides/slide_19.png" width="450" alt="Slide 19"/> |
