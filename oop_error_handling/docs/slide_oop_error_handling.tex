@@ -778,7 +778,7 @@ void main() {
 % ==============================================================================
 % SLIDE 15: SƠ ĐỒ LUỒNG DỮ LIỆU (DATA FLOW PIPELINE DẠNG LÀN DỌC)
 % ==============================================================================
-\begin{frame}{Sơ đồ Luồng dữ liệu (Data Flow Pipeline dạng Làn dọc)}
+\begin{frame}{Sơ đồ Luồng dữ liệu}
   \vspace{-0.3cm}
   \centering
   \resizebox{0.99\textwidth}{!}{%
@@ -839,7 +839,7 @@ void main() {
     \draw[arrow] (s5.west) -- node[above, font=\scriptsize\bfseries\color{black}] {Sự cố} (e2.east);
 
     % Hai nhánh lỗi đổ về Result.failure (tách rời cân đối hai bên, không cắt nhau)
-    \draw[arrow] (e1.west) -- ++(-0.6, 0) |- ([xshift=-0.8cm]fail.north);
+    \draw[arrow] (e1.west) -- (7.20, -2.00) -- (7.20, -3.85) -| ([xshift=-0.8cm]fail.north);
     \draw[arrow] (e2.south) -- (fail.north);
 
     % Luồng thành công đóng gói vé: Model -> Service (Result.success)
