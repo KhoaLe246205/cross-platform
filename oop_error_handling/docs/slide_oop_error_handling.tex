@@ -10,6 +10,7 @@
 
 \usepackage{booktabs}
 \usepackage{colortbl}
+\graphicspath{{../assets/images/}{./}}
 \setlength{\extrarowheight}{2pt}
 \usepackage{array}
 \usepackage{tikz}
@@ -241,7 +242,7 @@
 \begin{itemize}\setlength{\itemsep}{0.1em}
   \item \textbf{Khái niệm:} Trạng thái không thể bị biến đổi sau khi khởi tạo thành công.
   \item \textbf{Thực thi:} Khai báo mọi thuộc tính là \texttt{final} và dùng \texttt{const} constructor.
-  \item \textbf{Lợi ích:} An toàn tuyệt đối giữa Service và UI, an toàn luồng bất đồng bộ, tối ưu RAM qua chia sẻ thể hiện.
+  \item \textbf{Lợi ích:} An toàn hơn giữa Service và UI, an toàn luồng bất đồng bộ, tối ưu RAM qua chia sẻ thể hiện.
 \end{itemize}
 \vspace{0.1cm}
 \begin{block}{\footnotesize Ứng dụng trong dự án}
@@ -264,13 +265,13 @@
   \item \textbf{Initializer List} (\texttt{: field = val}): Gán giá trị trường \texttt{final} trước khi thân hàm thực thi.
 \end{itemize}
 \vspace{0.12cm}
-\begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, columns=flexible]
 // Named constructor: instance mac dinh
 const BookingModel.empty()
     : id = 'N/A',
       amount = 0,
       type = TicketType.standard,
-      labEvent = 'Chua co thong tin';
+      labEvent = (*@'Chưa có thông tin'@*);
 \end{lstlisting}
 \end{column}
 
@@ -281,15 +282,13 @@ const BookingModel.empty()
   \item Che giấu chi tiết cài đặt của lớp con phía sau giao diện lớp cha.
 \end{itemize}
 \vspace{0.12cm}
-\begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, columns=flexible]
 // Redirecting factory: chuyen sang lop con
 sealed class Result<T> {
   const Result();
-  factory Result.success(T data)
-      = Success<T>;
-  factory Result.failure(AppException error
-      )
-      = Failure<T>;
+  factory Result.success(T data) = Success<T>;
+  factory Result.failure(AppException error) =
+      Failure<T>;
 }
 \end{lstlisting}
 \end{column}
@@ -309,12 +308,13 @@ sealed class Result<T> {
   \item \textbf{Validation:} Thẩm định dữ liệu, chủ động ném ngoại lệ (\texttt{throw}).
 \end{itemize}
 \vspace{0.1cm}
-\begin{lstlisting}[basicstyle=\scriptsize\ttfamily]
+\begin{lstlisting}[basicstyle=\fontsize{5.8pt}{7.6pt}\selectfont\ttfamily, columns=flexible]
 factory BookingModel.fromJson(Map<String, dynamic> json) {
   if (json case {'id': final id, 'amount': int amount}) {
     return BookingModel(id: '$id', amount: amount, ...);
   }
-  throw const DataFormatException('Du lieu loi');
+  throw const DataFormatException(
+      (*@'Dữ liệu máy chủ bị lỗi'@*));
 }
 \end{lstlisting}
 \end{column}
@@ -434,21 +434,23 @@ mixin ValidationAndLogMixin {
 
 \begin{column}{0.50\textwidth}
 \textbf{3. Ràng buộc Generics (\texttt{<T extends X>}):}
-\begin{itemize}\setlength{\itemsep}{0.18em}
-  \item \textbf{Bounded Type:} Giới hạn kiểu tham số nhận lớp con của kiểu định sẵn.
+\begin{itemize}\setlength{\itemsep}{0.12em}
+  \item \textbf{Bounded Type:} Giới hạn kiểu tham số chỉ nhận lớp con của kiểu định sẵn.
   \item \textbf{Non-nullable Bound:} Với Null Safety, khai báo \texttt{<T extends Object>} để \textbf{loại trừ triệt để kiểu null}.
 \end{itemize}
-\vspace{0.12cm}
-\begin{lstlisting}[basicstyle=\scriptsize\ttfamily]
-// Bounded Type: chi nhan lop con AppException
-class ErrorHandler<E extends AppException> {
-  final E error;
-  const ErrorHandler(this.error);
-  void log() => print('[${error.code}] ${error.message}');
-}
+\vspace{0.08cm}
+\begin{lstlisting}[basicstyle=\fontsize{6.8pt}{8.8pt}\selectfont\ttfamily, columns=flexible]
+// (*@1. Non-nullable Bound: loại trừ kiểu null@*)
+T requireValue<T extends Object>(T? v) =>
+    v ?? (throw const UnknownException(
+        (*@'Giá trị null'@*)));
+
+// (*@2. Generic Function và Error Wrapper trong dự án@*)
+Future<Result<T>> errorWrapper<T>(
+    Future<T> Function() action) async { ... }
 \end{lstlisting}
-\vspace{0.15cm}
-{\footnotesize \textbf{$\rightarrow$ \textit{Ứng dụng trong dự án:}} \texttt{Result<T>}, \texttt{ErrorHandler<E>}}
+\vspace{0.10cm}
+{\scriptsize \textbf{$\rightarrow$ Ứng dụng trong dự án:} \texttt{Result<T>}, \texttt{errorWrapper<T>}}
 \end{column}
 \end{columns}
 \end{frame}
