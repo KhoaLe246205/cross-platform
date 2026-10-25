@@ -1,0 +1,996 @@
+% !TeX program = xelatex
+\documentclass[aspectratio=169, 10pt]{beamer}
+
+% ==============================================================================
+% GÓI VÀ CẤU HÌNH HỆ THỐNG
+% ==============================================================================
+\usepackage{fontspec}
+\setsansfont{Arial}
+\setmonofont{Consolas}
+
+\usepackage{booktabs}
+\usepackage{colortbl}
+\setlength{\extrarowheight}{2pt}
+\usepackage{array}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc}
+\usepackage{listings}
+
+% ==============================================================================
+% THIẾT LẬP PHONG CÁCH CHUẨN TEMPLATE: NỀN TRẮNG - CHỮ ĐEN - BẢNG MÀU XANH
+% ==============================================================================
+\useinnertheme{default}
+\useoutertheme{default}
+
+% Màu bảng chuẩn PowerPoint theo yêu cầu (Nền xanh, viền trắng)
+\definecolor{TableHead}{RGB}{68, 114, 196}      % Xanh dương đậm (#4472C4)
+\definecolor{TableRowOdd}{RGB}{207, 213, 234}   % Xanh tím nhạt dòng lẻ (#CFD5EA)
+\definecolor{TableRowEven}{RGB}{233, 235, 245}  % Xanh tím rất nhạt dòng chẵn (#E9EBF5)
+
+% Cấu hình màu Beamer thuần phong cách Nền trắng - Chữ đen
+\setbeamercolor{background canvas}{bg=white}
+\setbeamercolor{normal text}{fg=black}
+\setbeamercolor{frametitle}{fg=black, bg=white}
+\setbeamercolor{title}{fg=black}
+\setbeamercolor{subtitle}{fg=black}
+\setbeamercolor{author}{fg=black}
+\setbeamercolor{institute}{fg=black}
+\setbeamercolor{date}{fg=black}
+\setbeamercolor{item}{fg=black}
+\setbeamercolor{subitem}{fg=black}
+\setbeamercolor{block title}{fg=black, bg=gray!20}
+\setbeamercolor{block body}{fg=black, bg=gray!8}
+\setbeamercolor{block title alerted}{fg=black, bg=gray!20}
+\setbeamercolor{block body alerted}{fg=black, bg=gray!8}
+
+% Căn lề tiêu đề slide thuần đen thanh lịch theo template chuẩn
+\setbeamertemplate{frametitle}{
+  \vspace{0.25cm}
+  \textbf{\large\color{black}\insertframetitle}
+  \par\vspace{0.1cm}
+  {\color{black}\hrule height 0.6pt}
+  \vspace{0.2cm}
+}
+
+% Thanh chân trang cực kỳ tối giản, không màu mè
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1ex,left]{footline}%
+    \hspace*{2ex}\scriptsize\color{gray} Lập trình Đa nền tảng
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1ex,right]{footline}%
+    \scriptsize\color{gray} Trang \insertframenumber{} / 20\hspace*{2ex}
+  \end{beamercolorbox}}%
+  \vskip3pt%
+}
+
+% Cấu hình hiển thị code đơn giản (nền trắng, viền mảnh, chữ đen)
+\lstset{
+  language=Java,
+  basicstyle=\ttfamily\scriptsize\color{black},
+  keywordstyle=\bfseries\color{black},
+  stringstyle=\color{black},
+  commentstyle=\color{gray}\itshape,
+  numbers=none,
+  showstringspaces=false,
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{gray!40},
+  backgroundcolor=\color{white},
+  tabsize=2,
+  escapeinside={(*@}{@*)},
+  xleftmargin=3pt,
+  xrightmargin=3pt,
+  aboveskip=3pt,
+  belowskip=3pt
+}
+
+% Thông tin đề tài
+\title{\textbf{CHỦ ĐỀ 01: OOP NÂNG CAO \& XỬ LÝ NGOẠI LỆ TẬP TRUNG TRONG DART}\\ \large XÂY DỰNG MODULE QUẢN LÝ DỮ LIỆU AN TOÀN, LOẠI BỎ CRASH VÀ CÁCH LY LỖI}
+\subtitle{Môn học: Lập trình Đa nền tảng}
+\author{\textbf{SVTH:} 1. Lê Anh Khoa \quad 2. Ngô Quang Thế}
+\institute{
+  \textbf{TRƯỜNG ĐẠI HỌC BÁCH KHOA}\\
+  \textbf{KHOA ĐIỆN TỬ VÀ TRÍ TUỆ NHÂN TẠO}
+}
+\date{Đà Nẵng, 2026}
+
+\begin{document}
+
+% ==============================================================================
+% SLIDE 1: TRANG BÌA (CÂN ĐỐI, NỀN TRẮNG CHỮ ĐEN THEO CHUẨN ĐẠI HỌC)
+% ==============================================================================
+\begin{frame}[plain]
+  \vspace{0.4cm}
+  \begin{center}
+    {\large \textbf{TRƯỜNG ĐẠI HỌC BÁCH KHOA -- ĐẠI HỌC ĐÀ NẴNG}}\\[0.12cm]
+    {\large \textbf{KHOA ĐIỆN TỬ VÀ TRÍ TUỆ NHÂN TẠO}}
+  \end{center}
+
+  \vspace{0.45cm}
+  \begin{center}
+    {\normalsize Môn học: \textbf{Lập trình Đa nền tảng}}
+  \end{center}
+
+  \vspace{0.45cm}
+  \begin{center}
+    {\LARGE \textbf{<<Chủ đề 01: OOP nâng cao \& Xử lý ngoại lệ>>}}\\[0.22cm]
+    {\normalsize Module quản lý dữ liệu an toàn, loại bỏ crash và cách ly lỗi trong Dart}
+  \end{center}
+
+  \vspace{0.45cm}
+  \begin{center}
+    \begin{tabular}{rl}
+      \textbf{Sinh viên thực hiện:} & 1. Lê Anh Khoa \\
+                                    & 2. Ngô Quang Thế
+    \end{tabular}
+  \end{center}
+
+  \vfill
+  \begin{center}
+    {\normalsize Đà Nẵng, 2026}
+  \end{center}
+  \vspace{0.25cm}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 2: MỤC LỤC NỘI DUNG (AGENDA TÁCH RIÊNG THEO YÊU CẦU)
+% ==============================================================================
+\begin{frame}{Mục lục Nội dung Báo cáo}
+  \vspace{-0.1cm}
+  \begin{columns}[t,onlytextwidth]
+    \begin{column}{0.49\textwidth}
+      \begin{block}{\textbf{PHẦN I: NỀN TẢNG OOP}}
+        \footnotesize
+        \textbf{Thuyết trình: Lê Anh Khoa}
+        \begin{itemize}
+          \item \textbf{Đặt vấn đề \& Phân công công việc (WBS)}
+          \item \textbf{4 Trụ cột OOP trong Dart} \& Lớp bất biến (\textit{Immutable Object})
+          \item \textbf{Constructor:} Named \& Redirecting Factory
+          \item \textbf{Factory Constructor} \& Bảng đối sánh
+          \item \textbf{Mixin:} Tái sử dụng tính năng, cơ chế \texttt{on} và lý do dùng \texttt{with}
+          \item \textbf{Generics:} Reified Generics \& Bounded Type (\texttt{<T extends X>})
+          \item \textbf{Sealed Class \& Pattern Matching (Dart 3)}
+        \end{itemize}
+      \end{block}
+    \end{column}
+
+    \begin{column}{0.49\textwidth}
+      \begin{block}{\textbf{PHẦN II: NGOẠI LỆ \& KIẾN TRÚC}}
+        \footnotesize
+        \textbf{Thuyết trình: Ngô Quang Thế}
+        \begin{itemize}
+          \item \textbf{Exception vs Error:} \texttt{try-catch}, \texttt{rethrow}, \texttt{StackTrace}
+          \item \textbf{Cây phân cấp Custom Exception} đa tầng
+          \item \textbf{Hàm bao bọc (errorWrapper)} \& Result Pattern
+          \item \textbf{Lưới an toàn toàn cục} (Global Safety Net)
+          \item \textbf{Kiến trúc Phân tầng, State Management \& Chống Race Condition}
+          \item \textbf{Sơ đồ Luồng dữ liệu} (Data Flow Swimlanes)
+          \item \textbf{Kịch bản Thực nghiệm, Live Demo \& Tổng kết}
+        \end{itemize}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 3: ĐẶT VẤN ĐỀ & BẢNG PHÂN CÔNG WBS
+% ==============================================================================
+\begin{frame}{Đặt vấn đề, Mục tiêu \& Bảng phân công công việc (WBS)}
+  \vspace{-0.25cm}
+  \textbf{1. Đặt vấn đề \& Mục tiêu đề tài:}
+  \begin{itemize}
+    \item \textbf{Thực trạng:} Ứng dụng di động dễ gặp sự cố crash do ngoại lệ bất đồng bộ, JSON sai định dạng, hoặc Race Condition khi người dùng thao tác dồn dập.
+    \item \textbf{Mục tiêu:} Áp dụng OOP nâng cao và kỹ thuật xử lý lỗi tập trung trong Dart để xây dựng module đặt vé tự phục hồi, cách ly lỗi hoàn toàn.
+  \end{itemize}
+
+  \vspace{0.08cm}
+  \textbf{2. Bảng phân công công việc chi tiết (Work Breakdown Structure):}
+  \vspace{0.05cm}
+
+  \centering
+  \scriptsize
+  \setlength{\tabcolsep}{4pt}
+  \arrayrulecolor{white}
+  \renewcommand{\arraystretch}{1.12}
+  \begin{tabular}{|c|p{3.5cm}|p{5.5cm}|c|}
+    \hline
+    \rowcolor{TableHead}
+    \makebox[0.6cm][c]{\color{white}\textbf{TT}} & \centering\color{white}\textbf{HẠNG MỤC PHỤ TRÁCH} & \centering\color{white}\textbf{FILE MÃ NGUỒN CHÍNH} & \makebox[3.0cm][c]{\color{white}\textbf{NGƯỜI THỰC HIỆN}} \rule{0pt}{2.6ex} \tabularnewline
+    \hline
+    \rowcolor{TableRowOdd}
+    1 & \textbf{UI Design \& Safety Net} & \texttt{demo\_page.dart}, \texttt{main.dart} & Ngô Quang Thế \tabularnewline
+    \hline
+    \rowcolor{TableRowEven}
+    2 & \textbf{Business Logic} & \texttt{booking\_service.dart}, \texttt{lab\_location.dart} & Lê Anh Khoa \tabularnewline
+    \hline
+    \rowcolor{TableRowOdd}
+    3 & \textbf{State Management \& Utils} & \texttt{booking\_controller.dart}, \texttt{result.dart} & Ngô Quang Thế \tabularnewline
+    \hline
+    \rowcolor{TableRowEven}
+    4 & \textbf{Database / Mock API} & \texttt{booking\_model.dart}, \texttt{app\_exception.dart} & Lê Anh Khoa \tabularnewline
+    \hline
+    \rowcolor{TableRowOdd}
+    5 & \textbf{Reusable Logic (Mixin)} & \texttt{validation\_mixin.dart} & Lê Anh Khoa \tabularnewline
+    \hline
+    \rowcolor{TableRowEven}
+    6 & \textbf{Báo cáo \& Slide Beamer} & Slide LaTeX, Kịch bản kiểm thử Live Demo & Cả hai thành viên \tabularnewline
+    \hline
+  \end{tabular}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 4: OOP NỀN TẢNG TRONG DART
+% ==============================================================================
+\begin{frame}{Lập trình Hướng đối tượng (OOP) nền tảng trong Dart}
+  \vspace{-0.15cm}
+  \begin{columns}[t,onlytextwidth]
+    \begin{column}{0.49\textwidth}
+      \footnotesize
+      \textbf{1. Bốn trụ cột OOP trong Dart:}
+      \begin{itemize}
+        \item \textbf{Đóng gói (Encapsulation):} Ẩn giấu dữ liệu bằng tiền tố \texttt{\_} (phạm vi thư viện \textit{library-level}, không phải cấp class như Java/C++).
+        \item \textbf{Kế thừa (Inheritance):} Đơn kế thừa qua \texttt{extends}, mở rộng khả năng qua \texttt{implements} (mọi class đều ngầm định là một interface).
+        \item \textbf{Đa hình (Polymorphism):} Ghi đè phương thức (\texttt{@override}) và định kiểu linh hoạt qua lớp cơ sở.
+        \item \textbf{Trừu tượng (Abstraction):} Khai báo qua \texttt{abstract class}, định nghĩa khung hợp đồng nghiệp vụ.
+      \end{itemize}
+    \end{column}
+
+    \begin{column}{0.49\textwidth}
+      \footnotesize
+      \textbf{2. Thiết kế Lớp bất biến (Immutable Object):}
+      \begin{itemize}
+        \item \textbf{Khái niệm:} Đối tượng không thể bị thay đổi trạng thái sau khi đã được khởi tạo thành công.
+        \item \textbf{Thực thi trong Dart:} Khai báo tất cả thuộc tính là \texttt{final} và sử dụng \texttt{const constructor}.
+        \item \textbf{Lợi ích:} An toàn khi truyền giữa Service và Controller, dễ suy luận trong luồng bất đồng bộ (\textit{async/await}), tối ưu RAM qua chia sẻ thể hiện (\textit{Canonicalization}).
+      \end{itemize}
+      \vspace{0.08cm}
+      \begin{block}{\scriptsize Ứng dụng trong dự án}
+        \scriptsize \texttt{BookingModel} được thiết kế bất biến hoàn toàn, giúp luồng dữ liệu giữa Service và Controller luôn toàn vẹn, tránh biến đổi ngoài ý muốn.
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 5: CONSTRUCTOR: NAMED & REDIRECTING FACTORY
+% ==============================================================================
+\begin{frame}[fragile]{Constructor: Named \& Redirecting Factory Constructor}
+  \vspace{-0.2cm}
+  \begin{columns}[t,onlytextwidth]
+    \begin{column}{0.49\textwidth}
+      \footnotesize
+      \textbf{1. Named Constructor (Khởi tạo định danh):}
+      \begin{itemize}
+        \item Dart \textbf{không hỗ trợ Overloading constructor} cùng tên như Java/C++.
+        \item Giải pháp: Đặt tên rõ nghĩa theo cú pháp \texttt{ClassName.tênRiêng()}.
+        \item \textbf{Initializer List} (\texttt{: field = val}): Một trong các cách gán giá trị cho trường \texttt{final} trước khi thân hàm constructor thực thi.
+      \end{itemize}
+
+      \begin{lstlisting}[basicstyle=\ttfamily\scriptsize\color{black}, columns=flexible]
+// Named constructor: initialize empty default instance
+const BookingModel.empty()
+    : id = 'N/A',
+      amount = 0,
+      type = TicketType.standard,
+      labEvent = (*@'Chưa có thông tin'@*);
+      \end{lstlisting}
+    \end{column}
+
+    \begin{column}{0.49\textwidth}
+      \footnotesize
+      \textbf{2. Redirecting Factory Constructor:}
+      \begin{itemize}
+        \item Dùng từ khóa \texttt{factory} kết hợp \texttt{=} trỏ trực tiếp đến constructor của lớp con tương ứng.
+        \item Che giấu chi tiết cài đặt của lớp con phía sau giao diện lớp cơ sở.
+      \end{itemize}
+
+      \begin{lstlisting}[basicstyle=\ttfamily\scriptsize\color{black}, columns=flexible]
+// Redirecting factory constructor: forward to subclass
+sealed class Result<T> {
+  const Result();
+  factory Result.success(T data) 
+      = Success<T>;
+  factory Result.failure(AppException error) 
+      = Failure<T>;
+}
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 6: FACTORY CONSTRUCTOR & BẢNG SO SÁNH
+% ==============================================================================
+\begin{frame}[fragile]{Factory Constructor \& Bảng so sánh các Constructor}
+  \vspace{-0.25cm}
+  \begin{columns}[t,onlytextwidth]
+    \begin{column}{0.49\textwidth}
+      \footnotesize
+      \textbf{1. Bản chất của Factory Constructor:}
+      \begin{itemize}
+        \item \textbf{Không tự động tạo instance:} Bắt buộc phải có lệnh \texttt{return} trả về một đối tượng.
+        \item Có thể trả về đối tượng tái sử dụng (Cache / Singleton) hoặc trả về thể hiện của một lớp con.
+        \item Chứa logic nghiệp vụ, thẩm định dữ liệu và chủ động ném ngoại lệ (\texttt{throw}).
+      \end{itemize}
+      \begin{lstlisting}[basicstyle=\ttfamily\tiny\color{black}, columns=flexible]
+// (*@BookingModel.fromJson (phiên bản minh họa rút gọn)@*)
+factory BookingModel.fromJson(Map<String, dynamic> json) {
+  if (json case {'id': final id, 'amount': int amount}) {
+    return BookingModel(id: '$id', amount: amount, ...);
+  }
+  throw const DataFormatException((*@'Dữ liệu máy chủ bị lỗi'@*));
+}
+      \end{lstlisting}
+    \end{column}
+
+    \begin{column}{0.49\textwidth}
+      \textbf{2. Bảng so sánh 3 loại Constructor:}
+      \vspace{0.1cm}
+
+      \centering
+      \scriptsize
+      \setlength{\tabcolsep}{2pt}
+      \arrayrulecolor{white}
+      \renewcommand{\arraystretch}{1.15}
+      \begin{tabular}{|>{\raggedright\arraybackslash}p{1.6cm}|c|>{\raggedright\arraybackslash}p{1.95cm}|c|}
+        \hline
+        \rowcolor{TableHead}
+        \makebox[1.6cm][c]{\color{white}\textbf{TIÊU CHÍ}} & \makebox[1.0cm][c]{\color{white}\textbf{NAMED}} & \makebox[1.95cm][c]{\color{white}\textbf{FACTORY}} & \makebox[1.2cm][c]{\color{white}\textbf{REDIRECT}} \rule{0pt}{2.6ex} \tabularnewline
+        \hline
+        \rowcolor{TableRowOdd}
+        Tự tạo instance & Có & Không tự động\newline(cần \texttt{return}) & Không \tabularnewline
+        \hline
+        \rowcolor{TableRowEven}
+        Dùng \texttt{this} / Init list & Có & Không & Không \tabularnewline
+        \hline
+        \rowcolor{TableRowOdd}
+        Trả về lớp con & Không & Có & Có \tabularnewline
+        \hline
+        \rowcolor{TableRowEven}
+        Chứa logic & Có (hạn chế) & Có & Không \tabularnewline
+        \hline
+      \end{tabular}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 7: MIXIN TRONG DART
+% ==============================================================================
+\begin{frame}[fragile]{Mixin: Tái sử dụng tính năng không qua kế thừa}
+  \vspace{-0.3cm}
+  \begin{columns}[t,onlytextwidth]
+    \begin{column}{0.49\textwidth}
+      \footnotesize
+      \textbf{1. Khái niệm, Linearization \& Đơn kế thừa:}
+      \begin{itemize}
+        \item \textbf{Bản chất:} Tái sử dụng mã nguồn giữa các class không cùng cây phả hệ.
+        \item \textbf{Cơ chế Linearization:} Dart giải quyết xung đột phương thức bằng \textbf{Linearization} (thứ tự khai báo từ trái sang phải: mixin sau ghi đè mixin trước), giải quyết xung đột hình thoi (\textit{Diamond Problem}).
+        \item \textbf{Từ khóa \texttt{on}:} Giới hạn kiểu được phép dùng mixin (\texttt{mixin M on SuperClass}), cho phép gọi \texttt{super.method()}.
+        \item \textbf{Lý do dùng \texttt{with}:} Dart là ngôn ngữ \textbf{đơn kế thừa}. \texttt{BookingController} đã \texttt{extends ChangeNotifier} nên \textbf{bắt buộc dùng \texttt{with}} để nhúng \texttt{ValidationAndLogMixin}.
+      \end{itemize}
+    \end{column}
+
+    \begin{column}{0.49\textwidth}
+      \footnotesize
+      \textbf{2. Bảng đối sánh \& Code minh họa trong dự án:}
+      \vspace{0.04cm}
+
+      \centering
+      \scriptsize
+      \setlength{\tabcolsep}{2pt}
+      \arrayrulecolor{white}
+      \renewcommand{\arraystretch}{1.1}
+      \begin{tabular}{|>{\raggedright\arraybackslash}p{2.1cm}|c|c|c|}
+        \hline
+        \rowcolor{TableHead}
+        \centering\color{white}\textbf{ĐẶC TRƯNG} & \makebox[1.2cm][c]{\color{white}\textbf{EXTENDS}} & \makebox[1.2cm][c]{\color{white}\textbf{IMPL}} & \makebox[1.2cm][c]{\color{white}\textbf{WITH}} \rule{0pt}{2.2ex} \tabularnewline
+        \hline
+        \rowcolor{TableRowOdd}
+        Bản chất & "Là một" & "Hợp đồng" & "Thêm hành vi" \tabularnewline
+        \hline
+        \rowcolor{TableRowEven}
+        Số lượng & Duy nhất 1 & Nhiều & Nhiều \tabularnewline
+        \hline
+        \rowcolor{TableRowOdd}
+        Thừa hưởng & Có & Không & Có \tabularnewline
+        \hline
+        \rowcolor{TableRowEven}
+        Có constructor riêng & Có & Có & Không \tabularnewline
+        \hline
+      \end{tabular}
+
+      \vspace{0.04cm}
+      \begin{lstlisting}[basicstyle=\ttfamily\scriptsize\color{black}, columns=flexible]
+mixin ValidationAndLogMixin {
+  void validateTicketCount(int count) {
+    if (count <= 0) {
+      throw const BusinessLogicException(
+          (*@'Số lượng vé phải lớn hơn 0'@*));
+    }
+  }
+  void logInfo(String tag, String msg) =>
+      debugPrint('[INFO] [$tag]: $msg');
+}
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 8: GENERICS CƠ BẢN TRONG DART
+% ==============================================================================
+\begin{frame}[fragile]{Generics: Đảm bảo an toàn kiểu \& Reified Generics}
+  \vspace{-0.3cm}
+  \begin{columns}[t,onlytextwidth]
+    \begin{column}{0.49\textwidth}
+      \footnotesize
+      \textbf{1. Mục đích và Ý nghĩa:}
+      \begin{itemize}
+        \item Cho phép viết code tổng quát hoạt động trên nhiều kiểu dữ liệu mà vẫn đảm bảo \textbf{an toàn kiểu lúc biên dịch} (\textit{Compile-time Type Safety}).
+        \item Loại bỏ thao tác ép kiểu thủ công không an toàn (\mbox{\texttt{as Type}}), phòng ngừa phát sinh lỗi \texttt{TypeError} khi chạy.
+      \end{itemize}
+
+      \vspace{0.08cm}
+      \textbf{2. Cơ chế Reified Generics trong Dart:}
+      \begin{itemize}
+        \item Khác Java (\textit{Type Erasure}), Dart \textbf{lưu thông tin kiểu generic cả trong lúc chạy} (\textit{Runtime}).
+        \item Cho phép kiểm tra kiểu chính xác lúc thực thi: \texttt{result is Result<BookingModel>}.
+      \end{itemize}
+    \end{column}
+
+    \begin{column}{0.49\textwidth}
+      \footnotesize
+      \textbf{3. Ràng buộc Generics (\mbox{\texttt{<T extends X>}}):}
+      \begin{itemize}
+        \item \textbf{Bounded Type:} Giới hạn kiểu tham số nhận lớp con của kiểu định sẵn.
+        \item \textbf{Non-nullable Bound:} Với Null Safety, \texttt{<T>} mặc định là \texttt{Object?}. Viết \mbox{\texttt{<T extends Object>}} nhằm \textbf{loại trừ triệt để kiểu null}.
+      \end{itemize}
+      \begin{lstlisting}[basicstyle=\ttfamily\tiny\color{black}, columns=flexible]
+// (*@1. Non-nullable Bound: loại trừ kiểu null (T extends Object)@*)
+T requireValue<T extends Object>(T? v) =>
+    v ?? (throw const UnknownException((*@'Giá trị null'@*)));
+
+// (*@2. Bounded Type: chỉ nhận lớp con của AppException@*)
+class ErrorHandler<E extends AppException> {
+  final E error;
+  const ErrorHandler(this.error);
+  void log() => print('[${error.code}] ${error.message}');
+}
+      \end{lstlisting}
+      \vspace{0.06cm}
+      {\scriptsize\textit{$\rightarrow$ Ứng dụng trong dự án: \texttt{Result<T>}, \texttt{errorWrapper<T>}}}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 9: SEALED CLASS & PATTERN MATCHING (DART 3)
+% ==============================================================================
+\begin{frame}[fragile]{Sealed Class \& Pattern Matching (Dart 3)}
+  \begin{columns}[t,onlytextwidth]
+    \begin{column}{0.49\textwidth}
+      \textbf{1. Tính năng Sealed Class trong Dart 3:}
+      \begin{itemize}
+        \item \texttt{sealed class Result<T>}: Khóa cây kế thừa, chỉ cho phép các lớp con (\texttt{Success<T>}, \texttt{Failure<T>}) khai báo trong cùng một thư viện (\textit{same library}).
+        \item \textbf{Exhaustive Pattern Matching:} Trình biên dịch bắt buộc biểu thức \texttt{switch} phải kiểm tra đủ mọi trường hợp; báo lỗi ngay nếu bỏ sót nhánh.
+        \item \textbf{Loại bỏ trạng thái nhập nhằng:} Đảm bảo không bao giờ tồn tại trạng thái không hợp lệ (\textit{"vừa có dữ liệu vừa có lỗi"}).
+      \end{itemize}
+    \end{column}
+
+    \begin{column}{0.49\textwidth}
+      \textbf{2. Cú pháp Destructuring tinh gọn:}
+      \begin{lstlisting}[basicstyle=\ttfamily\scriptsize\color{black}, columns=flexible]
+// Exhaustive pattern matching on sealed Result<T>
+switch (result) {
+  case Success(:final data):
+    isLastActionSuccess = true;
+    lastBookedTicket = data;
+    location.deductSeats(type, data.amount);
+    
+  case Failure(:final error):
+    isLastActionSuccess = false;
+    statusMessage = error.message;
+}
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+  \note{Lê Anh Khoa hoàn thành trình bày Phần I về OOP nền tảng. Chuyển giao phần trình bày cho Ngô Quang Thế tiếp tục với Phần II về Xử lý ngoại lệ và Kiến trúc.}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 10: XỬ LÝ NGOẠI LỆ TRONG DART
+% ==============================================================================
+\begin{frame}[fragile]{Xử lý Ngoại lệ trong Dart: Exception vs Error}
+  \vspace{-0.35cm}
+  \begin{columns}[t,onlytextwidth]
+    \begin{column}{0.49\textwidth}
+      \footnotesize
+      \textbf{1. Phân biệt Exception và Error:}
+      \begin{itemize}
+        \item \textbf{Exception:} Ngoại lệ dự đoán trước trong runtime (mạng, JSON). Ứng dụng \textbf{phải bắt và tự phục hồi}.
+        \item \textbf{Error:} Lỗi lập trình (\texttt{TypeError}, \texttt{RangeError}). Về nguyên tắc không nên bắt mà cần sửa code \textit{(chỉ bắt tại biên để chống crash \& log)}.
+      \end{itemize}
+
+      \vspace{0.05cm}
+      \textbf{2. Từ khóa \texttt{rethrow} \& \texttt{StackTrace}:}
+      \begin{itemize}
+        \item \texttt{catch (e, stackTrace)}: Bắt đối tượng ngoại lệ kèm vết ngăn xếp chi tiết.
+        \item \texttt{rethrow}: Đẩy lỗi lên trên mà vẫn \textbf{bảo toàn Stack Trace} gốc.
+      \end{itemize}
+
+      \vspace{0.05cm}
+      \textbf{3. Hai quy tắc vàng khi bắt ngoại lệ:}
+      \begin{itemize}
+        \item Khối \texttt{on} cụ thể (\texttt{on AppException}) \textbf{phải đặt trước} \texttt{catch} chung để tránh bị nuốt mất ngoại lệ.
+        \item Khối \texttt{finally} \textbf{luôn thực thi} dọn tài nguyên kể cả khi khối lệnh trước đã gọi \texttt{return}.
+      \end{itemize}
+    \end{column}
+
+    \begin{column}{0.49\textwidth}
+      \footnotesize\textbf{4. Cấu trúc đầy đủ try-on-catch-finally:}
+      \begin{lstlisting}[basicstyle=\ttfamily\scriptsize\color{black}, columns=flexible]
+try {
+  final res = await apiCall();
+} on AppException catch (e) {
+  // Catch typed domain exception
+  logError(e.message);
+} catch (e, stackTrace) {
+  // Catch unhandled & inspect trace
+  logError('Unhandled: $e\n$stackTrace');
+} finally {
+  // (*@Luôn chạy kể cả khi try đã return!@*)
+  closeConnection();
+}
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 11: CÂY PHÂN CẤP CUSTOM EXCEPTION
+% ==============================================================================
+\begin{frame}[fragile]{Cây phân cấp Custom Exception (\texttt{AppException})}
+  \vspace{-0.35cm}
+  \begin{columns}[t,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \textbf{1. Triết lý phân cấp ngoại lệ tùy biến:}
+      \begin{itemize}
+        \item Không ném \texttt{Exception} thô, luôn dùng lớp có \texttt{code} và \texttt{message} chuẩn hóa.
+        \item Xây dựng lớp trừu tượng \texttt{AppException} triển khai (\texttt{implements}) interface \texttt{Exception}.
+        \item Mỗi phân lớp phản ánh chính xác một nhóm lỗi nghiệp vụ trong ứng dụng.
+      \end{itemize}
+
+      \vspace{0.05cm}
+      \begin{block}{\scriptsize 4 Phân nhóm ngoại lệ chuẩn hóa}
+        \tiny
+        $\bullet$ \textbf{NET\_ERR:} Mất kết nối mạng / máy chủ.\\
+        $\bullet$ \textbf{PARSE\_ERR:} Lỗi giải mã dữ liệu JSON.\\
+        $\bullet$ \textbf{BIZ\_ERR:} Vi phạm quy định số lượng vé.\\
+        $\bullet$ \textbf{UNKNOWN\_ERR:} Sự cố hệ thống bất ngờ.
+      \end{block}
+    \end{column}
+
+    \begin{column}{0.50\textwidth}
+      \textbf{2. Triển khai kế thừa với Super Parameters (Dart 2.17+):}
+      \begin{lstlisting}[basicstyle=\ttfamily\tiny\color{black}, columns=flexible]
+abstract class AppException implements Exception {
+  final String message, code;
+  const AppException(this.message, {required this.code});
+  @override
+  String toString() => '[$code] $message';
+}
+
+class NetworkException extends AppException {
+  const NetworkException(super.message)
+      : super(code: 'NET_ERR');
+}
+class DataFormatException extends AppException {
+  const DataFormatException(super.message)
+      : super(code: 'PARSE_ERR');
+}
+class BusinessLogicException extends AppException {
+  const BusinessLogicException(super.message)
+      : super(code: 'BIZ_ERR');
+}
+class UnknownException extends AppException {
+  const UnknownException(super.message)
+      : super(code: 'UNKNOWN_ERR');
+}
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 12: HÀM BAO BỌC (ERROR WRAPPER) & RESULT PATTERN
+% ==============================================================================
+\begin{frame}[fragile]{Hàm bao bọc (Error Wrapper) \& Result Pattern}
+  \vspace{-0.35cm}
+  \begin{columns}[t,onlytextwidth]
+    \begin{column}{0.49\textwidth}
+      \footnotesize
+      \textbf{1. Cơ chế đóng gói an toàn với \texttt{errorWrapper}:}
+      \begin{itemize}
+        \item \textbf{Cổng Fail-safe ở tầng biên:} \texttt{catch (e, st)} bắt trọn mọi lỗi (kể cả Error) để tránh sập app, đồng thời ghi log chi tiết kèm \texttt{StackTrace}.
+        \item \textbf{Chủ ý của \texttt{finally}:} Luôn thực thi dọn tài nguyên và log kết thúc phiên dù thành công hay ném lỗi.
+      \end{itemize}
+
+      \begin{lstlisting}[basicstyle=\ttfamily\tiny\color{black}, columns=flexible]
+// (*@errorWrapper (phiên bản minh họa rút gọn)@*)
+Future<Result<T>> errorWrapper<T>(
+    Future<T> Function() action) async {
+  try {
+    return Result.success(await action());
+  } on AppException catch (e) {
+    _recordError(e.toString()); // Log technical
+    return Result.failure(e);   // Domain typed
+  } catch (e, stackTrace) {
+    _recordError('Unhandled: $e\n$stackTrace');
+    return Result.failure(const UnknownException(
+        (*@'Đã có lỗi xảy ra trong quá trình xử lý, vui lòng thử lại'@*)));
+  } finally {
+    // (*@Chủ ý: luôn chạy đóng phiên kể cả khi có lỗi@*)
+    (*@logInfo('Wrapper', 'Hoàn tất phiên xử lý');@*)
+  }
+}
+      \end{lstlisting}
+    \end{column}
+
+    \begin{column}{0.49\textwidth}
+      \footnotesize
+      \textbf{2. Ma trận điều phối \& thông báo thân thiện:}
+      \vspace{0.08cm}
+
+      \centering
+      \scriptsize
+      \setlength{\tabcolsep}{1.8pt}
+      \arrayrulecolor{white}
+      \renewcommand{\arraystretch}{1.15}
+      \begin{tabular}{|>{\raggedright\arraybackslash}p{1.95cm}|c|>{\raggedright\arraybackslash}p{2.7cm}|}
+        \hline
+        \rowcolor{TableHead}
+        \makebox[1.95cm][c]{\color{white}\textbf{NGUYÊN NHÂN}} & \makebox[1.1cm][c]{\color{white}\textbf{MÃ LỖI}} & \makebox[2.7cm][c]{\color{white}\textbf{THÔNG BÁO UI}} \rule{0pt}{2.4ex} \tabularnewline
+        \hline
+        \rowcolor{TableRowOdd}
+        Số vé $\le 0$ / Hết chỗ & \texttt{BIZ\_ERR} & \textit{"Số lượng vé phải lớn hơn 0"}\newline\textit{"Không đủ vé tại phòng lab..."} \tabularnewline
+        \hline
+        \rowcolor{TableRowEven}
+        Mất mạng / Server sập & \texttt{NET\_ERR} & Mất kết nối tới máy chủ \tabularnewline
+        \hline
+        \rowcolor{TableRowOdd}
+        Payload JSON hỏng & \texttt{PARSE\_ERR} & Dữ liệu máy chủ bị lỗi \tabularnewline
+        \hline
+        \rowcolor{TableRowEven}
+        Lỗi bất ngờ khác & \texttt{UNKNOWN\_ERR} & Đã có lỗi xảy ra trong quá trình xử lý, vui lòng thử lại \tabularnewline
+        \hline
+      \end{tabular}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 13: LƯỚI AN TOÀN TOÀN CỤC (GLOBAL SAFETY NET)
+% ==============================================================================
+\begin{frame}[fragile]{Lưới an toàn toàn cục (Global Safety Net)}
+  \vspace{-0.3cm}
+  \begin{columns}[t,onlytextwidth]
+    \begin{column}{0.49\textwidth}
+      \footnotesize
+      \textbf{1. Hệ thống phòng thủ 2 lớp (Defense-in-Depth):}
+      \begin{itemize}
+        \item \textbf{Lớp 1 (Framework):} \texttt{FlutterError.onError} bắt lỗi tầng framework (build/render widget, layout, gestures...).
+        \item \textbf{Lớp 2 (Platform):} \texttt{PlatformDispatcher.onError} bắt ngoại lệ bất đồng bộ lọt ra ngoài luồng.
+        \item Trả về \texttt{true} để báo đã xử lý, ngăn lan truyền mặc định; lỗi được gom vào Console và hiển thị an toàn trên UI.
+      \end{itemize}
+
+      \vspace{0.02cm}
+      \begin{block}{\scriptsize Đồng bộ lỗi tức thì}
+        \scriptsize Lỗi đẩy vào \texttt{errorLogs} của Controller và cập nhật lên Console Terminal màu đen trên giao diện.
+      \end{block}
+    \end{column}
+
+    \begin{column}{0.49\textwidth}
+      \textbf{2. Cài đặt thực tế trong \texttt{main.dart}:}
+      \begin{lstlisting}[basicstyle=\ttfamily\scriptsize\color{black}, columns=flexible]
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  final controller = BookingController();
+
+  // Layer 1: Catch framework UI render errors
+  FlutterError.onError = (details) {
+    FlutterError.presentError(details);
+    controller.recordExternalError(
+      'FlutterFramework', details.exception);
+  };
+
+  // Layer 2: Catch unhandled async exceptions
+  PlatformDispatcher.instance.onError = 
+      (error, stack) {
+    debugPrint('$error\n$stack');
+    controller.recordExternalError(
+      'PlatformDispatcher', error);
+    return true; // Prevent app crash
+  };
+
+  runApp(MyApp(controller: controller));
+}
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 14: KIẾN TRÚC GIẢI PHÁP & CHỐNG RACE CONDITION
+% ==============================================================================
+\begin{frame}{Kiến trúc Phân tầng, State Management \& Chống Race Condition}
+  \vspace{-0.35cm}
+  \begin{columns}[c,onlytextwidth]
+    \begin{column}{0.50\textwidth}
+      \scriptsize
+      \textbf{1. Phân tầng kiến trúc rạch ròi:}
+      \begin{itemize}
+        \setlength{\itemsep}{1pt}
+        \item \textbf{Presentation Layer:} \texttt{DemoPage} $\leftrightarrow$ \texttt{ListenableBuilder} $\leftrightarrow$ \texttt{Controller}.
+        \item \textbf{Reusable Mixin:} \texttt{ValidationAndLogMixin} (dùng chung Controller \& Service).
+        \item \textbf{Data Layer:} \texttt{BookingService} (\texttt{errorWrapper}), \texttt{Model}, \texttt{Location}.
+        \item \textbf{Core Layer:} \texttt{Result<T>} (Sealed Class), \texttt{AppException} (Cây ngoại lệ).
+      \end{itemize}
+
+      \vspace{0.04cm}
+      \textbf{2. Bất đồng bộ \& Quản lý trạng thái:}
+      \begin{itemize}
+        \setlength{\itemsep}{1pt}
+        \item Áp dụng mô hình bất đồng bộ (\texttt{Future}, \texttt{async/await}, Event Loop).
+        \item \texttt{BookingController} phát thông báo qua \texttt{notifyListeners()}; giao diện dùng \texttt{ListenableBuilder} tái tạo chỉ các widget cần thiết.
+      \end{itemize}
+
+      \vspace{0.04cm}
+      \textbf{3. Chống Race Condition (Bấm liên tiếp):}
+      \begin{itemize}
+        \setlength{\itemsep}{1pt}
+        \item Chắn đầu tác vụ: \texttt{if (isLoading) return;}.
+        \item Khóa tương tác UI: \texttt{onPressed: isLoading ? null : \_submitBooking}.
+      \end{itemize}
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+      \centering
+      \begin{tikzpicture}[
+        node distance=0.28cm,
+        box/.style={draw=black, fill=white, thick, rounded corners=3pt, minimum width=6.1cm, minimum height=0.48cm, font=\tiny\bfseries, align=center},
+        safety/.style={draw=black, fill=white, thick, dashed, rounded corners=3pt, minimum width=6.1cm, minimum height=0.45cm, font=\tiny\bfseries, align=center},
+        mixin/.style={draw=black, fill=white, thick, rounded corners=3pt, minimum width=6.1cm, minimum height=0.45cm, font=\tiny\bfseries, align=center},
+        arrow/.style={thick, ->, >=Stealth, draw=black}
+      ]
+        \node[safety] (main) {GLOBAL SAFETY NET (main.dart)\\FlutterError + PlatformDispatcher};
+        \node[box, below=of main] (pres) {PRESENTATION LAYER\\DemoPage $\leftrightarrow$ ListenableBuilder $\leftrightarrow$ Controller};
+        \node[mixin, below=of pres] (mixin) {REUSABLE MIXIN\\ValidationAndLogMixin (Log, Time, Validate)};
+        \node[box, below=of mixin] (data) {DATA LAYER\\BookingService (errorWrapper) $\leftrightarrow$ Model / Location};
+        \node[box, below=of data] (core) {CORE LAYER\\Result<T> (Sealed Class) $\leftrightarrow$ AppException Hierarchy};
+
+        \draw[arrow] (main) -- node[right, font=\tiny] {bảo vệ UI} (pres);
+        \draw[arrow] (pres) -- node[right, font=\tiny] {with mixin} (mixin);
+        \draw[arrow] (mixin) -- node[right, font=\tiny] {with mixin} (data);
+        \draw[arrow] (data) -- node[right, font=\tiny] {dùng kiểu} (core);
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 15: SƠ ĐỒ LUỒNG DỮ LIỆU (DATA FLOW PIPELINE DẠNG LÀN DỌC)
+% ==============================================================================
+\begin{frame}{Sơ đồ Luồng dữ liệu}
+  \vspace{-0.3cm}
+  \centering
+  \resizebox{0.99\textwidth}{!}{%
+  \begin{tikzpicture}[
+    lane/.style={draw=black!40, dashed, fill=white, rounded corners=4pt},
+    stepbox/.style={draw=black, fill=white, thick, rounded corners=3pt, minimum width=2.65cm, minimum height=0.68cm, inner sep=3.5pt, font=\scriptsize\bfseries, align=center},
+    errbox/.style={draw=black, dashed, fill=white, thick, rounded corners=3pt, minimum width=2.85cm, minimum height=0.68cm, inner sep=3.5pt, font=\scriptsize\bfseries, align=center},
+    succbox/.style={draw=black, double, fill=white, thick, rounded corners=3pt, minimum width=2.85cm, minimum height=0.68cm, inner sep=3.5pt, font=\scriptsize\bfseries, align=center},
+    arrow/.style={thick, ->, >=Stealth, draw=black},
+    retarrow/.style={thick, dashed, ->, >=Stealth, draw=black}
+  ]
+    % 4 Làn dọc (Swimlanes) - Thiết kế mở rộng, thoáng đãng, chuẩn tọa độ
+    \draw[lane] (0.0, 0) rectangle (3.0, -6.2);
+    \draw[lane] (3.3, 0) rectangle (6.5, -6.2);
+    \draw[lane] (6.8, 0) rectangle (11.5, -6.2);
+    \draw[lane] (11.8, 0) rectangle (15.6, -6.2);
+
+    % Tiêu đề làn
+    \node[font=\small\bfseries\color{black}] at (1.50, 0.25) {1. UI (DemoPage)};
+    \node[font=\small\bfseries\color{black}] at (4.90, 0.25) {2. Controller};
+    \node[font=\small\bfseries\color{black}] at (9.15, 0.25) {3. Service + Wrapper};
+    \node[font=\small\bfseries\color{black}] at (13.70, 0.25) {4. Model \& Location};
+
+    % Hàng 1 (y = -0.75): Khởi tạo tác vụ
+    \node[stepbox] (s1) at (1.50, -0.75) {1. Bấm "Đặt vé"\\\relax (isLoading = true)};
+    \node[stepbox] (s2) at (4.90, -0.75) {2. bookTicket()\\\relax Khóa tác vụ trùng};
+    \node[stepbox, minimum width=2.9cm] (s3) at (9.15, -0.75) {3. errorWrapper<T>\\\relax Mở khối try-catch};
+
+    % Hàng 2 (y = -2.00): Kiểm tra hợp lệ dữ liệu & Nhánh lỗi nghiệp vụ
+    \node[stepbox, minimum width=3.4cm] (s4) at (13.70, -2.00) {4. validateTicketCount() (Mixin)\\\relax checkAvailability() (Location)};
+    \node[errbox] (e1) at (9.15, -2.00) {Lỗi vé / Hết chỗ\\\relax [BIZ\_ERR]};
+
+    % Hàng 3 (y = -3.25): Giả lập gọi API, Parse JSON & Nhánh lỗi hạ tầng
+    \node[stepbox, minimum width=3.2cm] (s5) at (13.70, -3.25) {5. Giả lập API / JSON\\\relax BookingModel.fromJson()};
+    \node[errbox, minimum width=3.1cm] (e2) at (9.15, -3.25) {Mất mạng / JSON hỏng\\\relax [NET/PARSE\_ERR]};
+
+    % Hàng 4 (y = -4.45): Kết quả Thất bại (Failure)
+    \node[errbox, minimum width=3.3cm] (fail) at (9.15, -4.45) {Result.failure(error)\\\relax Ghi log vào Console};
+    \node[errbox] (c_fail) at (4.90, -4.45) {6. Failure: Gán thông báo\\\relax statusMessage = err.msg};
+
+    % Hàng 5 (y = -5.55): Kết quả Thành công (Success)
+    \node[succbox, minimum width=3.3cm] (succ) at (9.15, -5.55) {Result.success(ticket)\\\relax Đóng gói vé thành công};
+    \node[succbox] (c_succ) at (4.90, -5.55) {6. Success: Trừ ghế\\\relax Lưu vé vào lịch sử};
+
+    % Cột 1: Hoàn tất tác vụ, cập nhật State & Giao diện (y = -5.00)
+    \node[stepbox, minimum height=0.95cm] (s_ui) at (1.50, -5.00) {7. notifyListeners()\\\relax Render UI an toàn\\\relax (isLoading = false)};
+
+    % Luồng khởi đầu: UI -> Controller -> Service
+    \draw[arrow] (s1) -- (s2);
+    \draw[arrow] (s2) -- (s3);
+
+    % Luồng thực thi: Service -> Model (Validation) -> Simulation/Parse
+    \draw[arrow] (s3.east) -| node[above, pos=0.35, font=\scriptsize\bfseries\color{black}] {Thực thi} (s4.north);
+    \draw[arrow] (s4.south) -- node[right, font=\scriptsize\bfseries\color{black}] {Hợp lệ} (s5.north);
+
+    % Luồng ném ngoại lệ: Model -> Service (2 nhánh độc lập hoàn toàn, rộng rãi)
+    \draw[arrow] (s4.west) -- node[above, font=\scriptsize\bfseries\color{black}] {Vi phạm} (e1.east);
+    \draw[arrow] (s5.west) -- node[above, font=\scriptsize\bfseries\color{black}] {Sự cố} (e2.east);
+
+    % Hai nhánh lỗi đổ về Result.failure (tách rời cân đối hai bên, không cắt nhau)
+    \draw[arrow] (e1.west) -- (7.20, -2.00) -- (7.20, -3.85) -| ([xshift=-0.8cm]fail.north);
+    \draw[arrow] (e2.south) -- (fail.north);
+
+    % Luồng thành công đóng gói vé: Model -> Service (Result.success)
+    \draw[arrow] (s5.south) -- ++(0, -1.0) node[right=2pt, font=\scriptsize\bfseries\color{black}] {Thành công} |- (succ.east);
+
+    % Luồng trả kết quả từ Service về Controller (2 đường song song độc lập)
+    \draw[retarrow] (fail.west) -- (c_fail.east);
+    \draw[retarrow] (succ.west) -- (c_succ.east);
+
+    % Cập nhật giao diện UI (quy tụ về s_ui)
+    \draw[retarrow] (c_fail.west) -- ([yshift=7pt]s_ui.east);
+    \draw[retarrow] (c_succ.west) -- ([yshift=-7pt]s_ui.east);
+  \end{tikzpicture}%
+  }
+
+  \vspace{0.08cm}
+  \begin{center}
+    \scriptsize \textbf{Nguyên tắc cốt lõi:} Mọi nhánh lỗi hay thành công đều được chuẩn hóa qua \texttt{Result<T>} trả về Controller; tầng UI hoàn toàn sạch sẽ, không chứa \texttt{try-catch}.
+  \end{center}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 16: KỊCH BẢN THỰC NGHIỆM & LIVE DEMO
+% ==============================================================================
+\begin{frame}{Kịch bản Thực nghiệm \& Bảng ca kiểm thử Live Demo}
+  \vspace{-0.25cm}
+  \textbf{Ma trận kiểm thử nhanh tích hợp trên giao diện \& ánh xạ kỹ thuật OOP:}
+  \vspace{0.06cm}
+
+  \centering
+  \scriptsize
+  \setlength{\tabcolsep}{3.5pt}
+  \arrayrulecolor{white}
+  \renewcommand{\arraystretch}{1.12}
+  \begin{tabular}{|p{2.6cm}|>{\raggedright\arraybackslash}p{3.2cm}|>{\raggedright\arraybackslash}p{5.1cm}|c|}
+    \hline
+    \rowcolor{TableHead}
+    \centering\color{white}\textbf{NÚT KIỂM THỬ} & \centering\color{white}\textbf{KỸ THUẬT OOP ÁP DỤNG} & \centering\color{white}\textbf{KẾT QUẢ GIAO DIỆN (UI BANNER)} & \makebox[1.8cm][c]{\color{white}\textbf{MÃ LỖI}} \rule{0pt}{2.3ex} \tabularnewline
+    \hline
+    \rowcolor{TableRowOdd}
+    \textbf{Đặt 2 vé chuẩn} & Factory fromJson + Result.success (Sealed) & Đặt thành công 2 vé, khấu trừ ghế trống phòng lab & --- \tabularnewline
+    \hline
+    \rowcolor{TableRowEven}
+    \textbf{Số vé âm (-1)} & Mixin: \texttt{validateTicketCount()} & Báo lỗi: \textit{"Số lượng vé phải lớn hơn 0"} & \texttt{[BIZ\_ERR]} \tabularnewline
+    \hline
+    \rowcolor{TableRowOdd}
+    \textbf{Vượt vé chuẩn (50 vé)} & LabLocation: \texttt{checkAvailability()} & Báo lỗi: \textit{"Không đủ vé Tiêu chuẩn tại [Hội thảo...]"} & \texttt{[BIZ\_ERR]} \tabularnewline
+    \hline
+    \rowcolor{TableRowEven}
+    \textbf{Vượt vé VIP (16 vé)} & LabLocation: \texttt{checkAvailability()} & Báo lỗi: \textit{"Không đủ vé VIP tại [Hội thảo...]"} & \texttt{[BIZ\_ERR]} \tabularnewline
+    \hline
+    \rowcolor{TableRowOdd}
+    \textbf{15 vé VIP (Mất mạng)} & \texttt{errorWrapper<T>} bắt ngoại lệ & Báo lỗi: \textit{"Mất kết nối tới máy chủ xác thực đặc quyền..."} & \texttt{[NET\_ERR]} \tabularnewline
+    \hline
+    \rowcolor{TableRowEven}
+    \textbf{Lab 404 (Lỗi JSON)} & Factory Constructor: \texttt{fromJson} & Báo lỗi: \textit{"Dữ liệu máy chủ bị lỗi"} & \texttt{[PARSE\_ERR]} \tabularnewline
+    \hline
+  \end{tabular}
+
+  \vspace{0.08cm}
+  \begin{block}{\scriptsize Nguyên tắc liên kết kịch bản kiểm thử với thiết kế OOP}
+    \scriptsize
+    $\bullet$ \textbf{Kiểm soát tại nguồn:} Lỗi bị chặn ngay tại tầng phát sinh (\texttt{validateTicketCount()}, \texttt{checkAvailability()}, \texttt{fromJson}).\\
+    $\bullet$ \textbf{Cách ly lỗi tập trung:} Cổng \texttt{errorWrapper<T>} chuẩn hóa ngoại lệ thành \texttt{Result.failure}, hiển thị an toàn trên UI.
+  \end{block}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 17: MINH CHỨNG THỰC NGHIỆM - TOÀN BỘ GIAO DIỆN ỨNG DỤNG
+% ==============================================================================
+\begin{frame}{Minh chứng Thực nghiệm: Toàn bộ Giao diện Ứng dụng}
+  \vspace{0.05cm}
+  \textbf{Giao diện thực tế ứng dụng Smart Booking System \& Nhật ký gom lỗi Console:}
+  \par\vspace{0.12cm}
+  \centering
+  \fboxsep=0pt\fboxrule=0.6pt%
+  \fbox{\includegraphics[width=0.98\textwidth]{app_full_screen.png}}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 18: TỔNG KẾT ĐỀ TÀI & HƯỚNG PHÁT TRIỂN (TÁCH RIÊNG THEO YÊU CẦU)
+% ==============================================================================
+\begin{frame}{Tổng kết Đề tài \& Hướng phát triển Tương lai}
+  \vspace{-0.15cm}
+  \begin{columns}[t,onlytextwidth]
+    \begin{column}{0.49\textwidth}
+      \textbf{1. Bốn kết quả cốt lõi đạt được:}
+      \begin{itemize}
+        \item \textbf{Named \& Factory Constructor:} Khởi tạo linh hoạt, chuyển đổi an toàn từ JSON bằng Pattern Matching Dart 3.
+        \item \textbf{Mixin:} Tái sử dụng tính năng validate và log thời gian giữa các tầng mà không cần kế thừa phức tạp.
+        \item \textbf{Generics + Sealed Class:} Một wrapper duy nhất cho mọi kiểu dữ liệu, ép xử lý triệt để nhánh kết quả.
+        \item \textbf{Custom Exception + Result + Safety Net:} Ứng dụng không crash, thông báo thân thiện, gom lỗi tập trung.
+      \end{itemize}
+    \end{column}
+
+    \begin{column}{0.49\textwidth}
+      \textbf{2. Hạn chế \& Hướng phát triển tương lai:}
+      \begin{itemize}
+        \item \textbf{Hạn chế hiện tại:} Dữ liệu đang được giả lập trên RAM, chưa lưu trữ bền vững.
+        \item \textbf{Hướng phát triển:}
+          \begin{itemize}
+            \item Kết nối RESTful API thật (bắt \texttt{SocketException}, \texttt{TimeoutException}).
+            \item Lưu trữ dữ liệu cục bộ với SQLite hoặc Hive.
+            \item Mở rộng State Management chuyên nghiệp với Bloc / Riverpod.
+            \item Xây dựng hệ thống kiểm thử tự động (Unit / Widget Test) toàn diện.
+          \end{itemize}
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 19: TÀI LIỆU THAM KHẢO & LIÊN KẾT DỰ ÁN GITHUB
+% ==============================================================================
+\begin{frame}{Tài liệu tham khảo \& Liên kết Dự án GitHub}
+  \vspace{-0.15cm}
+  \textbf{Tài liệu kỹ thuật chính thức \& Nguồn tham khảo chuyên môn:}
+  \vspace{0.25cm}
+  \begin{enumerate}
+    \setlength{\itemsep}{6pt}
+    \item \textbf{Dart Language Guide:} \textit{Object-Oriented Programming, Mixins, Generics \& Pattern Matching in Dart}, Dart Documentation.\\
+    \url{https://dart.dev/language}
+
+    \item \textbf{Effective Dart:} \textit{Guidelines for Style, Usage, and Design in Dart}, Dart Documentation.\\
+    \url{https://dart.dev/effective-dart}
+
+    \item \textbf{Handling Errors in Flutter:} \textit{Error handling, \texttt{FlutterError} \& \texttt{PlatformDispatcher}}, Flutter Documentation.\\
+    \url{https://docs.flutter.dev/testing/errors}
+
+    \item \textbf{Kho lưu trữ mã nguồn Đề tài (GitHub):} Dự án mã nguồn mở trên Windows Desktop Native \& Flutter SDK.\\
+    {\small\url{https://github.com/KhoaLe246205/cross-platform/tree/main/oop_error_handling}}
+  \end{enumerate}
+\end{frame}
+
+% ==============================================================================
+% SLIDE 20: LỜI CẢM ƠN & PHIÊN HỎI ĐÁP (Q&A TÁCH RIÊNG THEO YÊU CẦU)
+% ==============================================================================
+
+% ==============================================================================
+\begin{frame}[plain]
+  \centering
+  \vspace{1.8cm}
+  {\LARGE \textbf{XIN CHÂN THÀNH CẢM ƠN!}}\\[0.3cm]
+  {\large \textbf{QUÝ THẦY VÀ CÁC BẠN ĐÃ LẮNG NGHE}}\\[1.0cm]
+ 
+\end{frame}
+
+\end{document}
