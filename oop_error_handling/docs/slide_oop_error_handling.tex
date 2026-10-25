@@ -225,136 +225,120 @@
 % SLIDE 4: OOP NỀN TẢNG TRONG DART
 % ==============================================================================
 \begin{frame}{Lập trình Hướng đối tượng (OOP) nền tảng trong Dart}
-  \vspace{-0.15cm}
-  \begin{columns}[t,onlytextwidth]
-    \begin{column}{0.49\textwidth}
-      \footnotesize
-      \textbf{1. Bốn trụ cột OOP trong Dart:}
-      \begin{itemize}
-        \item \textbf{Đóng gói (Encapsulation):} Ẩn giấu dữ liệu bằng tiền tố \texttt{\_} (phạm vi thư viện \textit{library-level}, không phải cấp class như Java/C++).
-        \item \textbf{Kế thừa (Inheritance):} Đơn kế thừa qua \texttt{extends}, mở rộng khả năng qua \texttt{implements} (mọi class đều ngầm định là một interface).
-        \item \textbf{Đa hình (Polymorphism):} Ghi đè phương thức (\texttt{@override}) và định kiểu linh hoạt qua lớp cơ sở.
-        \item \textbf{Trừu tượng (Abstraction):} Khai báo qua \texttt{abstract class}, định nghĩa khung hợp đồng nghiệp vụ.
-      \end{itemize}
-    \end{column}
+\begin{columns}[c,onlytextwidth]
+\begin{column}{0.48\textwidth}
+\textbf{1. Bốn trụ cột OOP trong Dart:}
+\begin{itemize}\setlength{\itemsep}{0.1em}
+  \item \textbf{Đóng gói (Encapsulation):} Ẩn giấu dữ liệu bằng tiền tố \texttt{\_} (phạm vi thư viện \textit{library-level}, không phải cấp class như Java/C++).
+  \item \textbf{Kế thừa (Inheritance):} Đơn kế thừa qua \texttt{extends}, mở rộng qua \texttt{implements} (mọi class đều là interface ngầm).
+  \item \textbf{Đa hình (Polymorphism):} Ghi đè (\texttt{@override}) và định kiểu linh hoạt qua lớp cơ sở.
+  \item \textbf{Trừu tượng (Abstraction):} Khai báo qua \texttt{abstract class}, định nghĩa khung hợp đồng nghiệp vụ.
+\end{itemize}
+\end{column}
 
-    \begin{column}{0.49\textwidth}
-      \footnotesize
-      \textbf{2. Thiết kế Lớp bất biến (Immutable Object):}
-      \begin{itemize}
-        \item \textbf{Khái niệm:} Đối tượng không thể bị thay đổi trạng thái sau khi đã được khởi tạo thành công.
-        \item \textbf{Thực thi trong Dart:} Khai báo tất cả thuộc tính là \texttt{final} và sử dụng \texttt{const constructor}.
-        \item \textbf{Lợi ích:} An toàn khi truyền giữa Service và Controller, dễ suy luận trong luồng bất đồng bộ (\textit{async/await}), tối ưu RAM qua chia sẻ thể hiện (\textit{Canonicalization}).
-      \end{itemize}
-      \vspace{0.08cm}
-      \begin{block}{\scriptsize Ứng dụng trong dự án}
-        \scriptsize \texttt{BookingModel} được thiết kế bất biến hoàn toàn, giúp luồng dữ liệu giữa Service và Controller luôn toàn vẹn, tránh biến đổi ngoài ý muốn.
-      \end{block}
-    \end{column}
-  \end{columns}
+\begin{column}{0.50\textwidth}
+\textbf{2. Thiết kế Lớp bất biến (Immutable Object):}
+\begin{itemize}\setlength{\itemsep}{0.1em}
+  \item \textbf{Khái niệm:} Trạng thái không thể bị biến đổi sau khi khởi tạo thành công.
+  \item \textbf{Thực thi:} Khai báo mọi thuộc tính là \texttt{final} và dùng \texttt{const} constructor.
+  \item \textbf{Lợi ích:} An toàn tuyệt đối giữa Service và UI, an toàn luồng bất đồng bộ, tối ưu RAM qua chia sẻ thể hiện.
+\end{itemize}
+\vspace{0.1cm}
+\begin{block}{\footnotesize Ứng dụng trong dự án}
+\footnotesize \texttt{BookingModel} được thiết kế bất biến hoàn toàn, giúp luồng dữ liệu luôn toàn vẹn và loại trừ lỗi ngoài ý muốn.
+\end{block}
+\end{column}
+\end{columns}
 \end{frame}
 
 % ==============================================================================
 % SLIDE 5: CONSTRUCTOR: NAMED & REDIRECTING FACTORY
 % ==============================================================================
 \begin{frame}[fragile]{Constructor: Named \& Redirecting Factory Constructor}
-  \vspace{-0.2cm}
-  \begin{columns}[t,onlytextwidth]
-    \begin{column}{0.49\textwidth}
-      \footnotesize
-      \textbf{1. Named Constructor (Khởi tạo định danh):}
-      \begin{itemize}
-        \item Dart \textbf{không hỗ trợ Overloading constructor} cùng tên như Java/C++.
-        \item Giải pháp: Đặt tên rõ nghĩa theo cú pháp \texttt{ClassName.tênRiêng()}.
-        \item \textbf{Initializer List} (\texttt{: field = val}): Một trong các cách gán giá trị cho trường \texttt{final} trước khi thân hàm constructor thực thi.
-      \end{itemize}
-
-      \begin{lstlisting}[basicstyle=\ttfamily\scriptsize\color{black}, columns=flexible]
-// Named constructor: initialize empty default instance
+\begin{columns}[c,onlytextwidth]
+\begin{column}{0.48\textwidth}
+\textbf{1. Named Constructor (Khởi tạo định danh):}
+\begin{itemize}\setlength{\itemsep}{0.18em}
+  \item \textbf{Dart không hỗ trợ Overloading constructor} cùng tên như Java/C++.
+  \item \textbf{Giải pháp:} Đặt tên rõ nghĩa theo cú pháp \texttt{ClassName.tênRiêng()}.
+  \item \textbf{Initializer List} (\texttt{: field = val}): Gán giá trị trường \texttt{final} trước khi thân hàm thực thi.
+\end{itemize}
+\vspace{0.12cm}
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
+// Named constructor: instance mac dinh
 const BookingModel.empty()
     : id = 'N/A',
       amount = 0,
       type = TicketType.standard,
-      labEvent = (*@'Chưa có thông tin'@*);
-      \end{lstlisting}
-    \end{column}
+      labEvent = 'Chua co thong tin';
+\end{lstlisting}
+\end{column}
 
-    \begin{column}{0.49\textwidth}
-      \footnotesize
-      \textbf{2. Redirecting Factory Constructor:}
-      \begin{itemize}
-        \item Dùng từ khóa \texttt{factory} kết hợp \texttt{=} trỏ trực tiếp đến constructor của lớp con tương ứng.
-        \item Che giấu chi tiết cài đặt của lớp con phía sau giao diện lớp cơ sở.
-      \end{itemize}
-
-      \begin{lstlisting}[basicstyle=\ttfamily\scriptsize\color{black}, columns=flexible]
-// Redirecting factory constructor: forward to subclass
+\begin{column}{0.50\textwidth}
+\textbf{2. Redirecting Factory Constructor:}
+\begin{itemize}\setlength{\itemsep}{0.18em}
+  \item Dùng từ khóa \texttt{factory} kết hợp \texttt{=} trỏ trực tiếp đến constructor của lớp con tương ứng.
+  \item Che giấu chi tiết cài đặt của lớp con phía sau giao diện lớp cha.
+\end{itemize}
+\vspace{0.12cm}
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
+// Redirecting factory: chuyen sang lop con
 sealed class Result<T> {
   const Result();
-  factory Result.success(T data) 
+  factory Result.success(T data)
       = Success<T>;
-  factory Result.failure(AppException error) 
+  factory Result.failure(AppException error
+      )
       = Failure<T>;
 }
-      \end{lstlisting}
-    \end{column}
-  \end{columns}
+\end{lstlisting}
+\end{column}
+\end{columns}
 \end{frame}
 
 % ==============================================================================
 % SLIDE 6: FACTORY CONSTRUCTOR & BẢNG SO SÁNH
 % ==============================================================================
 \begin{frame}[fragile]{Factory Constructor \& Bảng so sánh các Constructor}
-  \vspace{-0.25cm}
-  \begin{columns}[t,onlytextwidth]
-    \begin{column}{0.49\textwidth}
-      \footnotesize
-      \textbf{1. Bản chất của Factory Constructor:}
-      \begin{itemize}
-        \item \textbf{Không tự động tạo instance:} Bắt buộc phải có lệnh \texttt{return} trả về một đối tượng.
-        \item Có thể trả về đối tượng tái sử dụng (Cache / Singleton) hoặc trả về thể hiện của một lớp con.
-        \item Chứa logic nghiệp vụ, thẩm định dữ liệu và chủ động ném ngoại lệ (\texttt{throw}).
-      \end{itemize}
-      \begin{lstlisting}[basicstyle=\ttfamily\tiny\color{black}, columns=flexible]
-// (*@BookingModel.fromJson (phiên bản minh họa rút gọn)@*)
+\begin{columns}[c,onlytextwidth]
+\begin{column}{0.48\textwidth}
+\textbf{1. Bản chất của Factory Constructor:}
+\begin{itemize}\setlength{\itemsep}{0.08em}
+  \item \textbf{Không tự tạo instance:} Bắt buộc có lệnh \texttt{return}.
+  \item \textbf{Linh hoạt:} Trả về instance tái sử dụng hoặc lớp con.
+  \item \textbf{Validation:} Thẩm định dữ liệu, chủ động ném ngoại lệ.
+\end{itemize}
+\vspace{0.1cm}
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily]
 factory BookingModel.fromJson(Map<String, dynamic> json) {
-  if (json case {'id': final id, 'amount': int amount}) {
-    return BookingModel(id: '$id', amount: amount, ...);
+  if (json case {'id': final id, 'amount': int a}) {
+    return BookingModel(id: '$id', amount: a, ...);
   }
-  throw const DataFormatException((*@'Dữ liệu máy chủ bị lỗi'@*));
+  throw const DataFormatException('Du lieu loi');
 }
-      \end{lstlisting}
-    \end{column}
+\end{lstlisting}
+\end{column}
 
-    \begin{column}{0.49\textwidth}
-      \textbf{2. Bảng so sánh 3 loại Constructor:}
-      \vspace{0.1cm}
+\begin{column}{0.50\textwidth}
+\textbf{2. Bảng so sánh 3 loại Constructor:}
+\vspace{0.2cm}
 
-      \centering
-      \scriptsize
-      \setlength{\tabcolsep}{2pt}
-      \arrayrulecolor{white}
-      \renewcommand{\arraystretch}{1.15}
-      \begin{tabular}{|>{\raggedright\arraybackslash}p{1.6cm}|c|>{\raggedright\arraybackslash}p{1.95cm}|c|}
-        \hline
-        \rowcolor{TableHead}
-        \makebox[1.6cm][c]{\color{white}\textbf{TIÊU CHÍ}} & \makebox[1.0cm][c]{\color{white}\textbf{NAMED}} & \makebox[1.95cm][c]{\color{white}\textbf{FACTORY}} & \makebox[1.2cm][c]{\color{white}\textbf{REDIRECT}} \rule{0pt}{2.6ex} \tabularnewline
-        \hline
-        \rowcolor{TableRowOdd}
-        Tự tạo instance & Có & Không tự động\newline(cần \texttt{return}) & Không \tabularnewline
-        \hline
-        \rowcolor{TableRowEven}
-        Dùng \texttt{this} / Init list & Có & Không & Không \tabularnewline
-        \hline
-        \rowcolor{TableRowOdd}
-        Trả về lớp con & Không & Có & Có \tabularnewline
-        \hline
-        \rowcolor{TableRowEven}
-        Chứa logic & Có (hạn chế) & Có & Không \tabularnewline
-        \hline
-      \end{tabular}
-    \end{column}
-  \end{columns}
+{\setlength{\tabcolsep}{2.8pt}\renewcommand{\arraystretch}{1.22}\footnotesize
+\begin{tabular}{|p{1.4cm}|c|p{1.55cm}|c|}
+\hline
+\rowcolor{TableHead}\color{white}\textbf{TIÊU CHÍ} & \color{white}\textbf{NAMED} & \color{white}\textbf{FACTORY} & \color{white}\textbf{REDIRECT} \\
+\hline
+Tự tạo instance & Có & Không tự động (cần return) & Không \\
+\hline
+Dùng \texttt{this} / Init list & Có & Không & Không \\
+\hline
+Trả về lớp con & Không & Có & Có \\
+\hline
+Chứa logic & Có (hạn chế) & Có & Không \\
+\hline
+\end{tabular}}
+\end{column}
+\end{columns}
 \end{frame}
 
 % ==============================================================================
@@ -424,47 +408,40 @@ mixin ValidationAndLogMixin {
 % SLIDE 8: GENERICS CƠ BẢN TRONG DART
 % ==============================================================================
 \begin{frame}[fragile]{Generics: Đảm bảo an toàn kiểu \& Reified Generics}
-  \vspace{-0.3cm}
-  \begin{columns}[t,onlytextwidth]
-    \begin{column}{0.49\textwidth}
-      \footnotesize
-      \textbf{1. Mục đích và Ý nghĩa:}
-      \begin{itemize}
-        \item Cho phép viết code tổng quát hoạt động trên nhiều kiểu dữ liệu mà vẫn đảm bảo \textbf{an toàn kiểu lúc biên dịch} (\textit{Compile-time Type Safety}).
-        \item Loại bỏ thao tác ép kiểu thủ công không an toàn (\mbox{\texttt{as Type}}), phòng ngừa phát sinh lỗi \texttt{TypeError} khi chạy.
-      \end{itemize}
+\begin{columns}[c,onlytextwidth]
+\begin{column}{0.48\textwidth}
+\textbf{1. Mục đích và Ý nghĩa:}
+\begin{itemize}\setlength{\itemsep}{0.18em}
+  \item Cho phép viết code tổng quát trên nhiều kiểu dữ liệu mà vẫn đảm bảo \textbf{an toàn kiểu lúc biên dịch} (\textit{Compile-time Type Safety}).
+  \item Loại bỏ ép kiểu thủ công (\texttt{as Type}), phòng ngừa phát sinh lỗi \texttt{TypeError} khi chạy.
+\end{itemize}
+\vspace{0.2cm}
+\textbf{2. Cơ chế Reified Generics trong Dart:}
+\begin{itemize}\setlength{\itemsep}{0.18em}
+  \item Khác Java (\textit{Type Erasure}), Dart \textbf{lưu thông tin kiểu generic cả trong lúc chạy} (\textit{Runtime}).
+  \item Cho phép kiểm tra kiểu chính xác lúc thực thi: \texttt{result is Result<BookingModel>}.
+\end{itemize}
+\end{column}
 
-      \vspace{0.08cm}
-      \textbf{2. Cơ chế Reified Generics trong Dart:}
-      \begin{itemize}
-        \item Khác Java (\textit{Type Erasure}), Dart \textbf{lưu thông tin kiểu generic cả trong lúc chạy} (\textit{Runtime}).
-        \item Cho phép kiểm tra kiểu chính xác lúc thực thi: \texttt{result is Result<BookingModel>}.
-      \end{itemize}
-    \end{column}
-
-    \begin{column}{0.49\textwidth}
-      \footnotesize
-      \textbf{3. Ràng buộc Generics (\mbox{\texttt{<T extends X>}}):}
-      \begin{itemize}
-        \item \textbf{Bounded Type:} Giới hạn kiểu tham số nhận lớp con của kiểu định sẵn.
-        \item \textbf{Non-nullable Bound:} Với Null Safety, \texttt{<T>} mặc định là \texttt{Object?}. Viết \mbox{\texttt{<T extends Object>}} nhằm \textbf{loại trừ triệt để kiểu null}.
-      \end{itemize}
-      \begin{lstlisting}[basicstyle=\ttfamily\tiny\color{black}, columns=flexible]
-// (*@1. Non-nullable Bound: loại trừ kiểu null (T extends Object)@*)
-T requireValue<T extends Object>(T? v) =>
-    v ?? (throw const UnknownException((*@'Giá trị null'@*)));
-
-// (*@2. Bounded Type: chỉ nhận lớp con của AppException@*)
+\begin{column}{0.50\textwidth}
+\textbf{3. Ràng buộc Generics (\texttt{<T extends X>}):}
+\begin{itemize}\setlength{\itemsep}{0.18em}
+  \item \textbf{Bounded Type:} Giới hạn kiểu tham số nhận lớp con của kiểu định sẵn.
+  \item \textbf{Non-nullable Bound:} Với Null Safety, khai báo \texttt{<T extends Object>} để \textbf{loại trừ triệt để kiểu null}.
+\end{itemize}
+\vspace{0.12cm}
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily]
+// Bounded Type: chi nhan lop con AppException
 class ErrorHandler<E extends AppException> {
   final E error;
   const ErrorHandler(this.error);
   void log() => print('[${error.code}] ${error.message}');
 }
-      \end{lstlisting}
-      \vspace{0.06cm}
-      {\scriptsize\textit{$\rightarrow$ Ứng dụng trong dự án: \texttt{Result<T>}, \texttt{errorWrapper<T>}}}
-    \end{column}
-  \end{columns}
+\end{lstlisting}
+\vspace{0.15cm}
+{\footnotesize \textbf{$\rightarrow$ \textit{Ứng dụng trong dự án:}} \texttt{Result<T>}, \texttt{ErrorHandler<E>}}
+\end{column}
+\end{columns}
 \end{frame}
 
 % ==============================================================================
