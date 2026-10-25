@@ -303,16 +303,16 @@ sealed class Result<T> {
 \begin{columns}[c,onlytextwidth]
 \begin{column}{0.48\textwidth}
 \textbf{1. Bản chất của Factory Constructor:}
-\begin{itemize}\setlength{\itemsep}{0.08em}
-  \item \textbf{Không tự tạo instance:} Bắt buộc có lệnh \texttt{return}.
-  \item \textbf{Linh hoạt:} Trả về instance tái sử dụng hoặc lớp con.
-  \item \textbf{Validation:} Thẩm định dữ liệu, chủ động ném ngoại lệ.
+\begin{itemize}\setlength{\itemsep}{0.1em}
+  \item \textbf{Không tự tạo instance:} Bắt buộc có lệnh \texttt{return} trả về một đối tượng.
+  \item \textbf{Linh hoạt:} Trả về instance tái sử dụng (Cache / Singleton) hoặc lớp con.
+  \item \textbf{Validation:} Thẩm định dữ liệu, chủ động ném ngoại lệ (\texttt{throw}).
 \end{itemize}
 \vspace{0.1cm}
 \begin{lstlisting}[basicstyle=\scriptsize\ttfamily]
 factory BookingModel.fromJson(Map<String, dynamic> json) {
-  if (json case {'id': final id, 'amount': int a}) {
-    return BookingModel(id: '$id', amount: a, ...);
+  if (json case {'id': final id, 'amount': int amount}) {
+    return BookingModel(id: '$id', amount: amount, ...);
   }
   throw const DataFormatException('Du lieu loi');
 }
@@ -321,22 +321,31 @@ factory BookingModel.fromJson(Map<String, dynamic> json) {
 
 \begin{column}{0.50\textwidth}
 \textbf{2. Bảng so sánh 3 loại Constructor:}
-\vspace{0.2cm}
+\vspace{0.15cm}
 
-{\setlength{\tabcolsep}{2.8pt}\renewcommand{\arraystretch}{1.22}\footnotesize
-\begin{tabular}{|p{1.4cm}|c|p{1.55cm}|c|}
+\centering
+\scriptsize
+\setlength{\tabcolsep}{2.5pt}
+\arrayrulecolor{white}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{1.6cm}|c|>{\raggedright\arraybackslash}p{1.95cm}|c|}
 \hline
-\rowcolor{TableHead}\color{white}\textbf{TIÊU CHÍ} & \color{white}\textbf{NAMED} & \color{white}\textbf{FACTORY} & \color{white}\textbf{REDIRECT} \\
+\rowcolor{TableHead}
+\makebox[1.6cm][c]{\color{white}\textbf{TIÊU CHÍ}} & \makebox[1.0cm][c]{\color{white}\textbf{NAMED}} & \makebox[1.95cm][c]{\color{white}\textbf{FACTORY}} & \makebox[1.2cm][c]{\color{white}\textbf{REDIRECT}} \rule{0pt}{2.5ex} \tabularnewline
 \hline
-Tự tạo instance & Có & Không tự động (cần return) & Không \\
+\rowcolor{TableRowOdd}
+Tự tạo instance & Có & Không tự động\newline(cần \texttt{return}) & Không \tabularnewline
 \hline
-Dùng \texttt{this} / Init list & Có & Không & Không \\
+\rowcolor{TableRowEven}
+Dùng \texttt{this} / Init list & Có & Không & Không \tabularnewline
 \hline
-Trả về lớp con & Không & Có & Có \\
+\rowcolor{TableRowOdd}
+Trả về lớp con & Không & Có & Có \tabularnewline
 \hline
-Chứa logic & Có (hạn chế) & Có & Không \\
+\rowcolor{TableRowEven}
+Chứa logic & Có (hạn chế) & Có & Không \tabularnewline
 \hline
-\end{tabular}}
+\end{tabular}
 \end{column}
 \end{columns}
 \end{frame}
