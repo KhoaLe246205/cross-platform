@@ -12,8 +12,8 @@ Kho lưu trữ tổng hợp các bài tập, đồ án và chuyên đề môn **
 
 | TT | HỌ VÀ TÊN | MSSV | VAI TRÒ CHÍNH THEO WBS | ĐÓNG GÓP |
 |:---:|:---|:---:|:---|:---:|
-| 1 | **Lê Anh Khoa** | 106230016 | • **Chủ đề 01 (OOP & Error Handling):** OOP Core & Architecture, Cây phân cấp `AppException`, Sealed Class `Result<T>`, Fail-safe `errorWrapper<T>`, Lớp bất biến `BookingModel`, Slide Beamer XeLaTeX.<br>• **Chủ đề 03 (Isolates):** Business Logic bóc tách JSON lớn & tính toán FLOPS (`SensorRecord`), đa luồng với `compute()` và `Isolate.spawn() + Ports`, `JsonGeneratorService`.<br>• **Quản trị Repo:** Quản trị GitHub Repository, cấu trúc thư mục và tài liệu báo cáo. | 50% |
-| 2 | **Ngô Quang Thế** | 106230028 | • **Chủ đề 01 (OOP & Error Handling):** Thiết kế giao diện `DemoPage`, Quản lý trạng thái đa tầng với `BookingController` & `ListenableBuilder`, Lưới an toàn toàn cục 2 lớp (`FlutterError` + `PlatformDispatcher`), Reusable Mixin `ValidationAndLogMixin`, Kịch bản Live Demo.<br>• **Chủ đề 03 (Isolates):** Thiết kế `BenchmarkScreen` & `FpsMonitorPanel` (bánh răng quay, biểu đồ FPS thời gian thực), State Management luồng dữ liệu tiến độ (0% – 100%), Slide Beamer XeLaTeX, Trực tiếp Live Demo. | 50% |
+| 1 | **Lê Anh Khoa** | 106230016 | • **Chủ đề 01 (OOP & Error Handling):** OOP Core & Architecture, Cây phân cấp `AppException`, Sealed Class `Result<T>`, Fail-safe `errorWrapper<T>`, Lớp bất biến `BookingModel`, Slide Beamer XeLaTeX.<br>• **Chủ đề 03 (Isolates):** Business Logic bóc tách JSON lớn & tính toán FLOPS (`SensorRecord`), đa luồng với `compute()` và `Isolate.spawn() + Ports`, `JsonGeneratorService`.<br>• **Chuyên đề Responsive & Adaptive UI:** Cơ sở lý thuyết Responsive vs Adaptive, cơ chế `MediaQuery.sizeOf(context)` & `InheritedModel`, `LayoutBuilder` & `BoxConstraints`, Breakpoints M3, Báo cáo Word & Slide XeLaTeX.<br>• **Quản trị Repo:** Quản trị GitHub Repository, cấu trúc thư mục và tài liệu báo cáo. | 50% |
+| 2 | **Ngô Quang Thế** | 106230028 | • **Chủ đề 01 (OOP & Error Handling):** Thiết kế giao diện `DemoPage`, Quản lý trạng thái đa tầng với `BookingController` & `ListenableBuilder`, Lưới an toàn toàn cục 2 lớp (`FlutterError` + `PlatformDispatcher`), Reusable Mixin `ValidationAndLogMixin`, Kịch bản Live Demo.<br>• **Chủ đề 03 (Isolates):** Thiết kế `BenchmarkScreen` & `FpsMonitorPanel` (bánh răng quay, biểu đồ FPS thời gian thực), State Management luồng dữ liệu tiến độ (0% – 100%), Slide Beamer XeLaTeX, Trực tiếp Live Demo.<br>• **Chuyên đề Responsive & Adaptive UI:** Thiết kế kiến trúc `AdaptiveHomeScreen` (Scaffold, NavRail/NavBar), Input Modalities (Touch $\ge 48\text{dp}$, `MouseRegion` hover, `Shortcuts` & `Actions` 1/2/3/4), `VisualDensity.adaptivePlatformDensity`, Live Demo. | 50% |
 
 ---
 
@@ -23,6 +23,7 @@ Kho lưu trữ tổng hợp các bài tập, đồ án và chuyên đề môn **
 |:---|:---|:---|:---|
 | [`oop_error_handling/`](./oop_error_handling) | **Chủ đề 01: OOP nâng cao & Xử lý ngoại lệ tập trung** | Xây dựng module quản lý dữ liệu an toàn, loại bỏ crash và cách ly lỗi đa tầng; ứng dụng Sealed Class, Pattern Matching, Reusable Mixin, Fail-safe Wrapper và Global Safety Net. | Dart 3 OOP (Factory, Mixin, Reified Generics, Sealed class), Custom Exception, Result Pattern, Global Safety Net, ListenableBuilder |
 | [`isolate/`](./isolate) | **Chủ đề 03: Đa luồng với Isolates** | Tối ưu hiệu năng xử lý tác vụ CPU-bound nặng mà không gây nghẽn luồng giao diện (Non-blocking UI), tích hợp bộ đo FPS thời gian thực. | Dart Isolates, `compute()`, `SendPort`/`ReceivePort`, Flutter Widgets |
+| [`responsive_adaptive/`](./responsive_adaptive) | **Chuyên đề: Thiết kế Giao diện Đa nền tảng (Responsive & Adaptive UI)** | Tối ưu hóa không gian hiển thị và phương thức tương tác đa nền tảng; phối hợp MediaQuery sizeOf, LayoutBuilder, Breakpoints M3, Input Modalities (Touch $\ge 48\text{dp}$, MouseRegion hover, Shortcuts 1/2/3/4) và AdaptivePlatformDensity. | Flutter Widgets (MediaQuery, LayoutBuilder, NavigationRail, NavigationBar, Shortcuts, Actions, FocusScope, MouseRegion, InkWell), Material Design 3 Window Size Classes |
 
 ---
 
@@ -39,12 +40,19 @@ cross-platform/
 │   ├── assets/images/             # Sơ đồ kiến trúc, luồng dữ liệu & ảnh minh chứng UI
 │   ├── docs/                      # Slide thuyết trình Beamer (XeLaTeX PDF & TeX)
 │   └── windows/                   # Cấu hình Windows desktop native C++
-└── isolate/                       # Chuyên đề 03: Đa luồng & Isolates Benchmark
-    ├── README.md                  # Hướng dẫn & Báo cáo chi tiết chuyên đề Isolate
+├── isolate/                       # Chuyên đề 03: Đa luồng & Isolates Benchmark
+│   ├── README.md                  # Hướng dẫn & Báo cáo chi tiết chuyên đề Isolate
+│   ├── pubspec.yaml               # Cấu hình dự án Flutter & dependencies
+│   ├── analysis_options.yaml      # Cấu hình linter Effective Dart (100% clean)
+│   ├── lib/                       # Mã nguồn ứng dụng Isolate Benchmark
+│   ├── assets/images/             # Sơ đồ kiến trúc độc lập bộ nhớ & ảnh chụp thực tế UI
+│   ├── docs/                      # Slide thuyết trình Beamer (XeLaTeX PDF & TeX)
+│   └── windows/                   # Cấu hình Windows desktop native C++
+└── responsive_adaptive/           # Chuyên đề: Thiết kế Giao diện Đa nền tảng: Responsive & Adaptive UI
+    ├── README.md                  # Báo cáo toàn diện & hướng dẫn chi tiết chuyên đề Responsive/Adaptive
     ├── pubspec.yaml               # Cấu hình dự án Flutter & dependencies
     ├── analysis_options.yaml      # Cấu hình linter Effective Dart (100% clean)
-    ├── lib/                       # Mã nguồn ứng dụng Isolate Benchmark
-    ├── assets/images/             # Sơ đồ kiến trúc độc lập bộ nhớ & ảnh chụp thực tế UI
+    ├── lib/                       # Mã nguồn ứng dụng (Constants, Screens, Widgets)
     ├── docs/                      # Slide thuyết trình Beamer (XeLaTeX PDF & TeX)
     └── windows/                   # Cấu hình Windows desktop native C++
 ```
