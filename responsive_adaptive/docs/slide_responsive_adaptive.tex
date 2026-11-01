@@ -1,0 +1,862 @@
+% !TeX program = xelatex
+\documentclass[aspectratio=169, 10pt]{beamer}
+
+% ==============================================================================
+% GÓI VÀ CẤU HÌNH HỆ THỐNG
+% ==============================================================================
+\usepackage{fontspec}
+\defaultfontfeatures{Ligatures=TeX}
+\setsansfont{Arial}
+\setmonofont{Consolas}
+
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{colortbl}
+\usepackage{array}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc}
+\usepackage{listings}
+% Cho phép ngắt dòng linh hoạt ở dấu gạch chéo và gạch nối trong URL để tránh ngắt dòng xấu
+\appto\UrlBreaks{\do\/\do-\do_}
+
+% ==============================================================================
+% THIẾT LẬP PHONG CÁCH CHUẨN TEMPLATE: NỀN TRẮNG - CHỮ ĐEN - BẢNG MÀU XANH
+% ==============================================================================
+\useinnertheme{default}
+\useoutertheme{default}
+
+% Màu bảng chuẩn PowerPoint (Nền xanh, viền trắng)
+\definecolor{TableHead}{RGB}{68, 114, 196}      % Xanh dương đậm (#4472C4)
+\definecolor{TableRowOdd}{RGB}{207, 213, 234}   % Xanh tím nhạt dòng lẻ (#CFD5EA)
+\definecolor{TableRowEven}{RGB}{233, 235, 245}  % Xanh tím rất nhạt dòng chẵn (#E9EBF5)
+
+\setbeamercolor{background canvas}{bg=white}
+\setbeamercolor{normal text}{fg=black}
+\setbeamercolor{frametitle}{fg=black, bg=white}
+\setbeamercolor{title}{fg=black}
+\setbeamercolor{subtitle}{fg=black}
+\setbeamercolor{author}{fg=black}
+\setbeamercolor{institute}{fg=black}
+\setbeamercolor{date}{fg=black}
+\setbeamercolor{item}{fg=black}
+\setbeamercolor{subitem}{fg=black}
+
+% Cấu hình khối block đồng bộ
+\setbeamercolor{block title}{fg=black, bg=gray!20}
+\setbeamercolor{block body}{fg=black, bg=gray!8}
+\setbeamercolor{block title alerted}{fg=black, bg=gray!20}
+\setbeamercolor{block body alerted}{fg=black, bg=gray!8}
+
+% Căn lề tiêu đề slide
+\setbeamertemplate{frametitle}{
+  \vspace{0.22cm}
+  \textbf{\large\color{black}\insertframetitle}
+  \par\vspace{0.08cm}
+  {\color{black}\hrule height 0.6pt}
+  \vspace{0.14cm}
+}
+
+% Thanh chân trang tối giản
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.55\paperwidth,ht=2.5ex,dp=1ex,left]{footline}%
+    \hspace*{2ex}\scriptsize\color{gray} Lập trình Đa nền tảng --- Chủ đề 03: Responsive \& Adaptive UI
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.45\paperwidth,ht=2.5ex,dp=1ex,right]{footline}%
+    \scriptsize\color{gray} Trang \insertframenumber{} / \inserttotalframenumber\hspace*{2ex}
+  \end{beamercolorbox}}%
+  \vskip3pt%
+}
+
+% Cấu hình hiển thị code Dart đơn giản
+\lstdefinelanguage{Dart}{
+  morekeywords={class, extends, implements, import, void, final, const, var, int, double, bool, String, dynamic, async, await, Future, Stream, return, if, else, for, while, switch, case, break, new, this, super, override, static, get, set, Widget, BuildContext, State, StatefulWidget, StatelessWidget, Key, Size, MediaQuery, LayoutBuilder, BoxConstraints, ColorScheme, ThemeData, MaterialApp, Scaffold, AppBar, NavigationBar, NavigationRail, NavigationDestination, NavigationRailDestination, Row, Column, Expanded, Container, ListView, GridView, Padding, Text, Icon, Icons, InkWell, MouseRegion, AnimatedContainer, SingleActivator, LogicalKeyboardKey, CallbackShortcuts, Focus, ConstrainedBox, kMinInteractiveDimension, defaultTargetPlatform, kIsWeb},
+  sensitive=true,
+  morecomment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]',
+  morestring=[b]"
+}
+
+\lstset{
+  language=Dart,
+  basicstyle=\ttfamily\scriptsize\color{black},
+  keywordstyle=\bfseries\color{blue!80!black},
+  stringstyle=\color{green!50!black},
+  commentstyle=\color{gray}\itshape,
+  numbers=none,
+  showstringspaces=false,
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{gray!40},
+  backgroundcolor=\color{gray!4},
+  tabsize=2
+}
+
+% Thông tin đề tài
+\title{\textbf{CHỦ ĐỀ 03: RESPONSIVE VÀ ADAPTIVE UI TRONG FLUTTER}\\ \large TỐI ƯU HÓA GIAO DIỆN ĐA NỀN TẢNG: THÍCH ỨNG KÍCH THƯỚC \& PHƯƠNG THỨC NHẬP LIỆU}
+\subtitle{\textbf{Báo cáo Chuyên đề} --- Môn: Lập trình Đa nền tảng}
+\author{\textbf{SVTH:} 1. Lê Anh Khoa \quad 2. Ngô Quang Thế}
+\institute{
+  \textbf{TRƯỜNG ĐẠI HỌC BÁCH KHOA -- ĐẠI HỌC ĐÀ NẴNG}\\
+  \textbf{KHOA ĐIỆN TỬ VÀ TRÍ TUỆ NHÂN TẠO}
+}
+\date{Đà Nẵng, 2026}
+
+\begin{document}
+
+% ------------------------------------------------------------------------------
+% SLIDE 1: TRANG BÌA (CHUẨN ĐỒNG BỘ 2 DỰ ÁN TRƯỚC)
+% ------------------------------------------------------------------------------
+\begin{frame}[plain]
+  \vspace{0.4cm}
+  \begin{center}
+    {\large \textbf{TRƯỜNG ĐẠI HỌC BÁCH KHOA -- ĐẠI HỌC ĐÀ NẴNG}}\\[0.12cm]
+    {\large \textbf{KHOA ĐIỆN TỬ VÀ TRÍ TUỆ NHÂN TẠO}}
+  \end{center}
+
+  \vspace{0.45cm}
+  \begin{center}
+    {\normalsize Môn học: \textbf{Lập trình Đa nền tảng}}
+  \end{center}
+
+  \vspace{0.45cm}
+  \begin{center}
+    {\LARGE \textbf{<<Chủ đề 03: Responsive và Adaptive UI>>}}\\[0.22cm]
+    {\normalsize Tối ưu hóa Giao diện Đa nền tảng: Thích ứng Kích thước \& Phương thức Nhập liệu}
+  \end{center}
+
+  \vspace{0.45cm}
+  \begin{center}
+    \begin{tabular}{rl}
+      \textbf{Sinh viên thực hiện:} & 1. Lê Anh Khoa \\
+                                    & 2. Ngô Quang Thế
+    \end{tabular}
+  \end{center}
+
+  \vfill
+  \begin{center}
+    {\normalsize Đà Nẵng, 2026}
+  \end{center}
+  \vspace{0.25cm}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% SLIDE 2: MỤC LỤC NỘI DUNG BÁO CÁO (TÁCH RIÊNG ĐỒNG BỘ)
+% ------------------------------------------------------------------------------
+\begin{frame}{Mục lục Nội dung Báo cáo}
+  \vspace{-0.15cm}
+  \begin{columns}[t,onlytextwidth]
+    \begin{column}{0.49\textwidth}
+      \begin{block}{\textbf{PHẦN I: NỀN TẢNG, CƠ CHẾ \& QUY TRÌNH}}
+        \footnotesize
+        \textbf{Thuyết trình: Lê Anh Khoa}
+        \begin{itemize}\setlength{\itemsep}{1.8pt}
+          \item \textbf{Responsive vs. Adaptive:} Phân định chuẩn theo 2 nguồn
+          \item \textbf{Bảng đối chiếu chuyên sâu} theo 4 tiêu chí cốt lõi
+          \item \textbf{Cơ chế MediaQuery:} \texttt{sizeOf} (Flutter 3.10+) \& Đơn vị dp
+          \item \textbf{Cơ chế LayoutBuilder:} Quy tắc vàng \textit{BoxConstraints}
+          \item \textbf{Quy trình 3 bước chuẩn:} Abstract $\rightarrow$ Measure $\rightarrow$ Branch
+          \item \textbf{So sánh phạm vi} \& Breakpoints Material Design 3
+        \end{itemize}
+      \end{block}
+    \end{column}
+
+    \begin{column}{0.49\textwidth}
+      \begin{block}{\textbf{PHẦN II: THIẾT KẾ, KIẾN TRÚC \& DEMO}}
+        \footnotesize
+        \textbf{Thuyết trình: Ngô Quang Thế}
+        \begin{itemize}\setlength{\itemsep}{1.8pt}
+          \item \textbf{Canonical Layouts chuẩn M3:} Feed, List-Detail, Supporting Pane
+          \item \textbf{Phương thức nhập liệu:} Touch ($\ge 48\text{dp}$) vs. Pointer/Keyboard
+          \item \textbf{Kiến trúc ứng dụng} \& Sơ đồ luồng quyết định 3 tầng
+          \item \textbf{Phân tích Mã nguồn Trọng tâm}
+          \item \textbf{Kịch bản Thực nghiệm} \& Bảng Live Demo đo đạc thực tế
+          \item \textbf{Tổng kết Đề tài} \& Hạn chế Nghiên cứu
+          \item \textbf{Tài liệu tham khảo (References)}
+        \end{itemize}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% SLIDE 3: KHÁI NIỆM RESPONSIVE DESIGN VÀ ADAPTIVE DESIGN (1.5 PHÚT)
+% ------------------------------------------------------------------------------
+\begin{frame}{Khái niệm Responsive Design và Adaptive Design}
+  \vspace{-0.2cm}
+  \begin{columns}[T]
+    % Cột 1: Responsive
+    \begin{column}{0.48\textwidth}
+      \begin{beamercolorbox}[rounded=true, shadow=false, wd=\textwidth, sep=4pt]{block body}
+        \textbf{\normalsize\color{blue!80!black}1. Responsive Design (Thiết kế đáp ứng)}
+        \vskip 0.06cm
+        \footnotesize
+        $\bullet$ \textbf{Theo Flutter Docs (Fit):}\\
+        Sắp xếp và định cỡ các phần tử giao diện sao cho \textbf{vừa vặn với không gian có sẵn} (\textit{Available Screen Space / Constraints}).\\[0.08cm]
+        $\bullet$ \textbf{Theo Web Design (Fluid -- Ethan Marcotte):}\\
+        Bố cục duy nhất, co giãn \textbf{liên tục, mượt mà như chất lỏng}.\\[0.08cm]
+        $\bullet$ \textbf{Công cụ Flutter cốt lõi:}\\
+        \texttt{Expanded}, \texttt{Flexible}, \texttt{Wrap}, \texttt{AspectRatio}, \texttt{FractionallySizedBox}.
+      \end{beamercolorbox}
+    \end{column}
+
+    % Cột 2: Adaptive
+    \begin{column}{0.48\textwidth}
+      \begin{beamercolorbox}[rounded=true, shadow=false, wd=\textwidth, sep=4pt]{block body}
+        \textbf{\normalsize\color{blue!80!black}2. Adaptive Design (Thiết kế thích ứng)}
+        \vskip 0.06cm
+        \footnotesize
+        $\bullet$ \textbf{Theo Flutter Docs (Usable):}\\
+        Lựa chọn bố cục và thành phần điều khiển phù hợp để \textbf{tối ưu khả năng sử dụng} theo ngữ cảnh thiết bị (\textit{Platform, Input, Screen}).\\[0.08cm]
+        $\bullet$ \textbf{Theo cộng đồng Web (Discrete):}\\
+        Mỗi ngưỡng một bố cục riêng, \textbf{nhảy bậc rời rạc} tại các ngưỡng Breakpoint; rẽ nhánh hệ điều hành.\\[0.08cm]
+        $\bullet$ \textbf{Cơ chế thực thi trong Flutter:}\\
+        Rẽ nhánh \texttt{if/else} theo Breakpoint, theo Nền tảng (\texttt{defaultTargetPlatform}, \texttt{kIsWeb}), phím tắt.
+      \end{beamercolorbox}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.12cm}
+  \begin{beamercolorbox}[rounded=true, shadow=false, wd=\textwidth, sep=3.5pt]{block body}
+    \centering\footnotesize
+    \textbf{Bản chất công cụ đo lường:} \texttt{MediaQuery} và \texttt{LayoutBuilder} là các \textbf{công cụ đo đạc không gian (Measure)}; giao diện là \textit{Responsive} hay \textit{Adaptive} phụ thuộc vào chiến lược cấu trúc \textbf{sau khi đo} (co giãn liên tục hay rẽ nhánh nhảy bậc)!
+  \end{beamercolorbox}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% SLIDE 4: BẢNG ĐỐI CHIẾU CHUYÊN SÂU RESPONSIVE VS. ADAPTIVE (1.5 PHÚT)
+% ------------------------------------------------------------------------------
+\begin{frame}{Bảng đối chiếu chuyên sâu: Responsive vs. Adaptive}
+  \vspace{-0.15cm}
+  \centering
+  \footnotesize
+  \setlength{\tabcolsep}{5pt}
+  \arrayrulecolor{white}
+  \renewcommand{\arraystretch}{1.25}
+  \begin{tabular}{|>{\raggedright\arraybackslash}p{2.3cm}|>{\raggedright\arraybackslash}p{4.9cm}|>{\raggedright\arraybackslash}p{5.0cm}|}
+    \hline
+    \rowcolor{TableHead}
+    \centering\color{white}\textbf{Tiêu chí} & 
+    \centering\color{white}\textbf{Responsive UI (Đáp ứng)} & 
+    \centering\color{white}\textbf{Adaptive UI (Thích ứng)} \tabularnewline
+    \hline
+    \rowcolor{TableRowOdd}
+    \textbf{1. Bản chất thay đổi} & 
+    Thay đổi \textbf{kích thước} phần tử trên \textbf{cùng một cấu trúc} cây Widget duy nhất. & 
+    Thay đổi \textbf{cấu trúc} cây Widget (hoán đổi hoặc thay thế Widget này bằng Widget khác). \tabularnewline
+    \hline
+    \rowcolor{TableRowEven}
+    \textbf{2. Tính chất chuyển dịch} & 
+    Mượt mà, liên tục theo từng đơn vị dp khi người dùng kéo dãn cửa sổ (\textit{Fluid layout}). & 
+    Nhảy bậc, rời rạc khi kích thước vượt qua các ngưỡng điểm ngắt định trước (\textit{Breakpoints}). \tabularnewline
+    \hline
+    \rowcolor{TableRowOdd}
+    \textbf{3. Minh chứng trong dự án} & 
+    Độ rộng mỗi thẻ học phần trong \texttt{GridView} tự co dãn để lấp đầy cột khả dụng. & 
+    Hoán đổi \texttt{NavigationBar} $\leftrightarrow$ \texttt{NavigationRail}; hoán đổi \texttt{ListView} $\leftrightarrow$ \texttt{GridView}. \tabularnewline
+    \hline
+    \rowcolor{TableRowEven}
+    \textbf{4. Mối quan hệ thực tế} & 
+    \multicolumn{2}{>{\raggedright\arraybackslash}p{10.2cm}|}{\textbf{Phân định theo Phạm vi đo lường (Scope)}: Cấp độ Vĩ mô (\textit{Macro} --- toàn cửa sổ) và Cấp độ Vi mô (\textit{Micro} --- vùng nội dung cục bộ). Ở cả 2 cấp độ đều kết hợp linh hoạt cả Responsive lẫn Adaptive!} \tabularnewline
+    \hline
+  \end{tabular}
+  \vspace{0.15cm}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% SLIDE 5: CƠ CHẾ HOẠT ĐỘNG CỦA MEDIAQUERY (1.5 PHÚT)
+% ------------------------------------------------------------------------------
+\begin{frame}{Cơ chế hoạt động của MediaQuery}
+  \vspace{-0.15cm}
+  \begin{columns}[T]
+    \begin{column}{0.54\textwidth}
+      \footnotesize
+      $\bullet$ \textbf{Bản chất kỹ thuật:}
+      \begin{itemize}\setlength{\itemsep}{1.5pt}
+        \item \texttt{MediaQuery} là một \textbf{InheritedWidget} ở gốc ứng dụng, cung cấp dữ liệu về toàn bộ cửa sổ (\textit{Window Viewport}).
+        \item \textbf{Đơn vị đo lường:} Đo bằng \textbf{Logical Pixels (dp)}, không phải pixel vật lý. Ví dụ: Màn hình Windows scale 125\% thì 1920px vật lý tương ứng $1536\text{dp}$.
+      \end{itemize}
+      
+      \vskip 0.08cm
+      $\bullet$ \textbf{Các thuộc tính cốt lõi \& API liên quan:}
+      \begin{itemize}\setlength{\itemsep}{1.5pt}
+        \item \texttt{size}: Kích thước tổng thể cửa sổ (\texttt{width}, \texttt{height}).
+        \item \texttt{orientation}: Hướng toàn cửa sổ (\texttt{MediaQuery.orientationOf}) $\longleftrightarrow$ Phân biệt với hướng cục bộ theo Widget cha (\texttt{OrientationBuilder}).
+        \item \texttt{padding} \& \texttt{viewInsets}: Vùng khuyết phần cứng (\texttt{SafeArea}) và vùng bàn phím ảo.
+        \item \texttt{textScaler}: Tỉ lệ cỡ chữ theo trợ năng (\textit{Accessibility}).
+      \end{itemize}
+    \end{column}
+
+    \begin{column}{0.44\textwidth}
+      \begin{beamercolorbox}[rounded=true, shadow=false, wd=\textwidth, sep=4pt]{block body}
+        \textbf{\normalsize\color{blue!80!black}Tối ưu hiệu năng: MediaQuery.sizeOf}
+        \vskip 0.08cm
+        \footnotesize
+        \textbf{1. Cách tiếp cận cũ ($<$ Flutter 3.10):}
+        \begin{center}
+          \texttt{MediaQuery.of(context).size}
+        \end{center}
+        $\rightarrow$ Đăng ký lắng nghe \textbf{toàn bộ} \texttt{MediaQueryData}. Bất kỳ thuộc tính nào đổi (bàn phím ảo bật lên, padding đổi) $\rightarrow$ Rebuild thừa các widget phụ thuộc!
+        
+        \vskip 0.08cm
+        \textbf{2. Chuẩn tối ưu mới (Flutter 3.10+):}
+        \begin{center}
+          \texttt{\textbf{MediaQuery.sizeOf(context)}}
+        \end{center}
+        $\rightarrow$ Ứng dụng cơ chế \textbf{InheritedModel}, chỉ rebuild khi kích thước thay đổi. \textbf{Loại bỏ rebuild do bàn phím ảo và padding!}
+      \end{beamercolorbox}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% SLIDE 6: CƠ CHẾ HOẠT ĐỘNG CỦA LAYOUTBUILDER (1.5 PHÚT)
+% ------------------------------------------------------------------------------
+\begin{frame}{Cơ chế hoạt động của LayoutBuilder}
+  \vspace{-0.1cm}
+  \begin{center}
+    \textbf{\normalsize\color{blue!80!black}Quy tắc vàng trong thuật toán Layout của Flutter:}\\
+    \textit{"Constraints go down. Sizes go up. Parent sets position."}\\
+    \small(Ràng buộc truyền từ cha xuống con $\longrightarrow$ Con tự tính kích thước báo lên cha $\longrightarrow$ Cha xác định vị trí cho con)
+  \end{center}
+
+  \vspace{0.15cm}
+  \begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+      \small
+      $\bullet$ \textbf{Bản chất kỹ thuật của LayoutBuilder:}
+      \begin{itemize}\setlength{\itemsep}{3pt}
+        \item Hoãn (\textit{defers}) việc xây dựng cây Widget con cho đến \textbf{pha Layout} (\textit{Layout phase}).
+        \item Cung cấp trực tiếp đối tượng \texttt{BoxConstraints} mà \textbf{Widget cha truyền xuống} (\texttt{minWidth}, \texttt{maxWidth}, \texttt{minHeight}, \texttt{maxHeight}).
+      \end{itemize}
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+      \small
+      $\bullet$ \textbf{Ý nghĩa kiến trúc thành phần:}
+      \begin{itemize}\setlength{\itemsep}{3pt}
+        \item Giúp xây dựng các \textbf{Component độc lập (\textit{Decoupled Widgets})}.
+        \item Component tự quyết định bố cục dựa trên \textbf{không gian khả dụng thực tế của chính nó}, không bị phụ thuộc vào kích thước toàn cửa sổ.
+      \end{itemize}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.25cm}
+  \centering
+  % Sơ đồ TikZ: Tọa độ chuẩn xác 100%, tỷ lệ khoảng cách hoàn hảo, không tràn viền, triệt tiêu hoàn toàn lỗi đè chữ
+  \begin{tikzpicture}[>=Stealth]
+    % Khối 1: Widget Cha
+    \node [rectangle, draw=blue!80!black, fill=blue!8, rounded corners=5pt, font=\footnotesize, text width=2.85cm, align=center, minimum height=0.9cm] (parent) at (-5.45, 0) {\textbf{Widget Cha}\\[2pt]\scriptsize(Expanded / Container)};
+
+    % Khối 2: LayoutBuilder
+    \node [rectangle, draw=black!80, fill=gray!12, rounded corners=5pt, font=\footnotesize, text width=2.45cm, align=center, minimum height=0.9cm] (lb) at (0, 0) {\textbf{LayoutBuilder}\\[2pt]\scriptsize(context, constraints)};
+
+    % Khối 3: Widget Con
+    \node [rectangle, draw=green!60!black, fill=green!8, rounded corners=5pt, font=\footnotesize, text width=2.85cm, align=center, minimum height=0.9cm] (child) at (5.45, 0) {\textbf{Widget Con}\\[2pt]\scriptsize(ListView / GridView)};
+
+    % Mũi tên 1: Cha -> LayoutBuilder
+    \draw [thick, -{Stealth[length=2.5mm]}] (parent.east) -- (lb.west)
+      node [midway, above=3pt, font=\scriptsize\bfseries\color{blue!80!black}] {BoxConstraints}
+      node [midway, below=3pt, font=\tiny\color{gray!80!black}] {Ràng buộc đi xuống};
+
+    % Mũi tên 2: LayoutBuilder -> Con
+    \draw [thick, -{Stealth[length=2.5mm]}] (lb.east) -- (child.west)
+      node [midway, above=3pt, font=\scriptsize\bfseries\color{green!60!black}] {maxWidth $\ge$ 500dp?}
+      node [midway, below=3pt, font=\tiny\color{gray!80!black}] {Quyết định bố cục};
+  \end{tikzpicture}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% SLIDE 7: QUY TRÌNH 3 BƯỚC CHUẨN FLUTTER (SLIDE MỚI CHUẨN KIẾN TRÚC GOOGLE)
+% ------------------------------------------------------------------------------
+\begin{frame}{Quy trình 3 bước chuẩn Flutter: Abstract $\rightarrow$ Measure $\rightarrow$ Branch}
+  \vspace{-0.12cm}
+  \textbf{Triết lý kiến trúc chính thức của Google Flutter trong thiết kế giao diện thích ứng:}
+  \vspace{0.18cm}
+
+  \begin{columns}[T]
+    % Bước 1: Abstract
+    \begin{column}{0.32\textwidth}
+      \begin{beamercolorbox}[rounded=true, shadow=false, wd=\textwidth, sep=5pt]{block body}
+        \textbf{\footnotesize\color{blue!80!black}1. ABSTRACT}\\[1.5pt]
+        {\scriptsize\color{blue!80!black}(Trừu tượng hóa)}
+        \vskip 0.08cm
+        \footnotesize
+        $\bullet$ \textbf{Mục tiêu:}\\
+        Xác định các Widget cần thích ứng và tách dữ liệu dùng chung để tái sử dụng độc lập ở nhiều ngữ cảnh mà không phụ thuộc cứng vào màn hình cha.\\[0.12cm]
+        $\bullet$ \textbf{Ánh xạ mã nguồn:}\\
+        $\rightarrow$ Tách Widget: \texttt{Card}, \texttt{Content}\\
+        $\rightarrow$ Tách Dữ liệu: \texttt{\_navItems} dùng chung
+      \end{beamercolorbox}
+    \end{column}
+
+    % Bước 2: Measure
+    \begin{column}{0.32\textwidth}
+      \begin{beamercolorbox}[rounded=true, shadow=false, wd=\textwidth, sep=5pt]{block body}
+        \textbf{\footnotesize\color{blue!80!black}2. MEASURE}\\[1.5pt]
+        {\scriptsize\color{blue!80!black}(Đo đạc không gian)}
+        \vskip 0.08cm
+        \footnotesize
+        $\bullet$ \textbf{Mục tiêu:}\\
+        Đo đạc chính xác diện tích khả dụng tại đúng phạm vi phụ trách (\textit{Macro} hoặc \textit{Micro}).\\[0.12cm]
+        $\bullet$ \textbf{Ánh xạ mã nguồn:}\\
+        $\rightarrow$ \textbf{Macro (Toàn cửa sổ):}\\
+        \texttt{MediaQuery.sizeOf(context)}\\
+        $\rightarrow$ \textbf{Micro (Vùng nội dung):}\\
+        \texttt{LayoutBuilder (maxWidth)}
+      \end{beamercolorbox}
+    \end{column}
+
+    % Bước 3: Branch
+    \begin{column}{0.32\textwidth}
+      \begin{beamercolorbox}[rounded=true, shadow=false, wd=\textwidth, sep=5pt]{block body}
+        \textbf{\footnotesize\color{blue!80!black}3. BRANCH}\\[1.5pt]
+        {\scriptsize\color{blue!80!black}(Rẽ nhánh quyết định)}
+        \vskip 0.08cm
+        \footnotesize
+        $\bullet$ \textbf{Mục tiêu:}\\
+        Dựa trên kết quả đo, đưa ra quyết định: Hoán đổi cấu trúc widget hoặc co giãn thông số.\\[0.12cm]
+        $\bullet$ \textbf{Ánh xạ mã nguồn:}\\
+        $\rightarrow$ \texttt{isWide ? NavRail : NavBar}\\
+        $\rightarrow$ \texttt{w < 500 ? List : Grid}\\
+        $\rightarrow$ \texttt{cols = (w/250).clamp(2,4)}
+      \end{beamercolorbox}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.22cm}
+  \centering
+  \footnotesize
+  \textbf{Tổng kết quy trình:} Ứng dụng hiện thực hóa đồng bộ 3 bước Abstract, Measure, Branch ở cả cấp độ toàn cửa sổ (Scaffold) lẫn vùng chứa cục bộ (Content).
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% SLIDE 8: SO SÁNH PHẠM VI & HỆ THỐNG BREAKPOINT MATERIAL DESIGN 3
+% ------------------------------------------------------------------------------
+\begin{frame}{So sánh Phạm vi đo lường \& Hệ thống Breakpoint (MD3)}
+  \vspace{-0.25cm}
+  \centering
+  \footnotesize
+  \setlength{\tabcolsep}{5pt}
+  \arrayrulecolor{white}
+  \renewcommand{\arraystretch}{1.15}
+  \begin{tabular}{|>{\raggedright\arraybackslash}p{2.2cm}|>{\raggedright\arraybackslash}p{4.95cm}|>{\raggedright\arraybackslash}p{5.05cm}|}
+    \hline
+    \rowcolor{TableHead}
+    \centering\color{white}\textbf{Tiêu chí} & 
+    \centering\color{white}\textbf{MediaQuery (Toàn cục - Macro)} & 
+    \centering\color{white}\textbf{LayoutBuilder (Cục bộ - Micro)} \tabularnewline
+    \hline
+    \rowcolor{TableRowOdd}
+    \textbf{1. Phạm vi \& Thời điểm} & 
+    Toàn bộ cửa sổ ứng dụng (\textit{Viewport}) $\bullet$ Đánh giá ở pha Build qua \texttt{InheritedModel}. & 
+    Vùng chứa do cha cấp phát (\textit{BoxConstraints}) $\bullet$ Hoãn đánh giá đến pha Layout. \tabularnewline
+    \hline
+    \rowcolor{TableRowEven}
+    \textbf{2. Tình huống 840dp (Demo thực tế)} & 
+    Vẫn thấy toàn màn hình $\ge 840\text{dp} \rightarrow$ \textbf{Dễ tính thừa cột, gây vỡ/tràn viền!} & 
+    Đo đúng vùng nội dung còn $\approx 583\text{dp}$ (đã trừ Rail 256dp) $\rightarrow$ \textbf{Tự hạ 2 cột, bảo toàn bố cục!} \tabularnewline
+    \hline
+  \end{tabular}
+
+  \vspace{0.12cm}
+  \begin{columns}[T]
+    % Cột 1: Khái niệm Breakpoint
+    \begin{column}{0.485\textwidth}
+      \begin{beamercolorbox}[rounded=true, shadow=false, wd=\textwidth, sep=3.5pt]{block body}
+        \textbf{\scriptsize\color{blue!80!black}1. Khái niệm Breakpoint \& Mốc Nội dung}
+        \vskip 0.04cm
+        \scriptsize
+        $\bullet$ \textbf{Định nghĩa Breakpoint:}\\
+        Là các \textbf{ngưỡng kích thước định lượng (dp)} để quyết định rẽ nhánh cấu trúc hoặc co giãn giao diện.\\[0.05cm]
+        $\bullet$ \textbf{Nguyên tắc cốt lõi:}\\
+        Tư duy theo \textbf{không gian khả dụng}, tuyệt đối tránh phỏng đoán phần cứng (\texttt{isTablet/isPhone}).\\[0.05cm]
+        $\bullet$ \textbf{Mốc nội dung nhóm chọn (Content-driven):}\\
+        \textbf{500dp} (ngưỡng chia List/Grid) \& \textbf{250dp} (độ rộng cột tối thiểu, chưa trừ padding/khoảng cách).
+      \end{beamercolorbox}
+    \end{column}
+
+    % Cột 2: Chuẩn M3
+    \begin{column}{0.485\textwidth}
+      \begin{beamercolorbox}[rounded=true, shadow=false, wd=\textwidth, sep=3.5pt]{block body}
+        \textbf{\scriptsize\color{blue!80!black}2. Chuẩn Window Size Classes (Material 3)}
+        \vskip 0.04cm
+        \scriptsize
+        $\bullet$ \textbf{Phân loại Chiều rộng cửa sổ (Window Width):}\\
+        -- \textbf{Compact}: $< 600\text{dp}$ \ $\bullet$ \ \textbf{Medium}: $600 - 839\text{dp}$\\
+        -- \textbf{Expanded}: $840 - 1199\text{dp}$ (bắt đầu $\ge 2$ panes)\\
+        -- \textbf{Large}: $1200 - 1599\text{dp}$ \ $\bullet$ \ \textbf{Extra-large}: $\ge 1600\text{dp}$\\[0.05cm]
+        $\bullet$ \textbf{Chiều cao (Height):} Compact ($< 480$), Medium ($480 - 899$), Expanded ($\ge 900\text{dp}$).\\[0.05cm]
+        $\bullet$ \textbf{Áp dụng:} Demo dùng mốc 600 \& 840dp của M3 cho khung ngoài (Scaffold/Rail).
+      \end{beamercolorbox}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% SLIDE 9: CÁC MẪU BỐ CỤC THÍCH ỨNG & CANONICAL LAYOUTS (M3) (1.5 PHÚT)
+% ------------------------------------------------------------------------------
+\begin{frame}{Các mẫu bố cục thích ứng \& Canonical Layouts (M3)}
+  \vspace{-0.1cm}
+  \begin{columns}[T]
+    % Nhánh 1: Canonical Layouts
+    \begin{column}{0.48\textwidth}
+      \begin{beamercolorbox}[rounded=true, shadow=false, wd=\textwidth, sep=5.5pt]{block body}
+        \textbf{\normalsize\color{blue!80!black}1. Ba mẫu Canonical Layouts chuẩn M3}
+        \vskip 0.1cm
+        \small
+        $\bullet$ \textbf{Supporting Pane:}\\
+        Khu vực nội dung chính đi kèm một ngăn thông tin phụ hỗ trợ thao tác bên cạnh.\\[0.12cm]
+        $\bullet$ \textbf{List-Detail:}\\
+        Danh sách chọn bên trái, khung chi tiết bên phải trên cùng một màn hình rộng ($\ge 2$ panes).\\[0.12cm]
+        $\bullet$ \textbf{Feed / Grid (Dự án demo):}\\
+        Bố cục dạng thẻ lưới hiển thị luồng thông tin, tự co dãn số cột theo không gian khả dụng.
+      \end{beamercolorbox}
+    \end{column}
+
+    % Nhánh 2: Công thái học và Khuyến nghị Pane
+    \begin{column}{0.48\textwidth}
+      \begin{beamercolorbox}[rounded=true, shadow=false, wd=\textwidth, sep=5.5pt]{block body}
+        \textbf{\normalsize\color{blue!80!black}2. Phân bổ Pane \& Công thái học hiển thị}
+        \vskip 0.1cm
+        \small
+        $\bullet$ \textbf{Khuyến nghị số Pane theo Size Class:}\\
+        Compact \& Medium: 1 pane duy nhất.\\
+        Expanded \& Large: 2 panes song song.\\
+        Extra-large ($\ge 1600\text{dp}$): 2 đến 3 panes.\\[0.12cm]
+        $\bullet$ \textbf{Giới hạn chiều rộng đọc (Readability):}\\
+        Tránh để dòng văn bản trải dài hết màn hình rộng; nên giới hạn độ rộng đọc tối ưu (thường khoảng $600 - 800\text{dp}$ theo quy tắc kinh nghiệm; tab Thiết bị demo giới hạn $580\text{dp}$) bằng \texttt{ConstrainedBox}.
+      \end{beamercolorbox}
+    \end{column}
+  \end{columns}
+  \vspace{0.2cm}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% SLIDE 10: NGUYÊN TẮC THIẾT KẾ THEO PHƯƠNG THỨC NHẬP LIỆU (1.5 PHÚT)
+% ------------------------------------------------------------------------------
+\begin{frame}{Nguyên tắc thiết kế theo Phương thức nhập liệu (Input Modalities)}
+  \vspace{-0.2cm}
+  \centering
+  \footnotesize
+  \setlength{\tabcolsep}{5pt}
+  \arrayrulecolor{white}
+  \renewcommand{\arraystretch}{1.2}
+  % Sử dụng >{\raggedright\arraybackslash} để triệt tiêu hoàn toàn lỗi giãn chữ (badness 10000)
+  \begin{tabular}{|>{\raggedright\arraybackslash}p{2.3cm}|>{\raggedright\arraybackslash}p{4.9cm}|>{\raggedright\arraybackslash}p{5.0cm}|}
+    \hline
+    \rowcolor{TableHead}
+    \centering\color{white}\textbf{Tiêu chí} & 
+    \centering\color{white}\textbf{Cảm ứng (Touch - Mobile/Tablet)} & 
+    \centering\color{white}\textbf{Chuột \& Bàn phím (Pointer/Keyboard - Desktop)} \tabularnewline
+    \hline
+    \rowcolor{TableRowOdd}
+    \textbf{1. Tiết diện \& Vùng tương tác} & 
+    Đầu ngón tay có tiết diện lớn $\rightarrow$ \textbf{Bắt buộc vùng chạm tối thiểu $\ge 48\times 48\text{dp}$} (\texttt{kMinInteractiveDimension}). & 
+    Con trỏ chuột chính xác từng pixel $\rightarrow$ Khi dùng \texttt{adaptivePlatformDensity}, Flutter tự chuyển \texttt{VisualDensity} sang \texttt{compact} để tăng mật độ dữ liệu. \tabularnewline
+    \hline
+    \rowcolor{TableRowEven}
+    \textbf{2. Trạng thái tương tác} & 
+    \textbf{Không có trạng thái Hover (rê chuột)}, nhưng hỗ trợ đa dạng cử chỉ: tap, double-tap, long-press, drag/swipe và pinch zoom. & 
+    Bổ sung \textbf{Hover} (\texttt{MouseRegion}), đổi con trỏ chuột (\texttt{SystemMouseCursors.click}), \texttt{Tooltip}, chuột phải (\texttt{onSecondaryTap}) và cuộn \texttt{Scrollbar}. \tabularnewline
+    \hline
+    \rowcolor{TableRowOdd}
+    \textbf{3. Điều hướng \& Phím tắt} & 
+    Thao tác vuốt cuộn màn hình (\textit{Fling / Pan gesture}). & 
+    Di chuyển tiêu điểm qua phím \texttt{Tab} (\texttt{FocusTraversalGroup}) và kích hoạt lệnh tức thì qua \textbf{Phím tắt} (\texttt{CallbackShortcuts}). \tabularnewline
+    \hline
+    \rowcolor{TableRowEven}
+    \textbf{4. Thiết bị lai (Hybrid Devices)} & 
+    \multicolumn{2}{>{\raggedright\arraybackslash}p{10.2cm}|}{\textbf{Laptop Windows cảm ứng (Chuột + Chạm)}: Sàn tối thiểu cho mọi thành phần chạm được bắt buộc $\ge 48\times 48\text{dp}$ (\texttt{kMinInteractiveDimension}). Mật độ \texttt{compact} chỉ áp dụng cho hiển thị dữ liệu chuột, tuyệt đối không được phá vỡ ngưỡng chạm công thái học này.} \tabularnewline
+    \hline
+  \end{tabular}
+  \vspace{0.15cm}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% SLIDE 11: KIẾN TRÚC ỨNG DỤNG THỰC HÀNH & LUỒNG CHỌN BỐ CỤC (1 PHÚT)
+% ------------------------------------------------------------------------------
+\begin{frame}{Kiến trúc ứng dụng Thực hành \& Luồng chọn bố cục}
+  \vspace{-0.1cm}
+  \begin{columns}[T]
+    \begin{column}{0.42\textwidth}
+      \small
+      \textbf{Cấu trúc 4 tệp mã nguồn dự án:}
+      \vskip 0.12cm
+      \footnotesize
+      \begin{itemize}\setlength{\itemsep}{3pt}
+        \item \texttt{breakpoints.dart}:\\
+        Quản lý mốc M3 (\texttt{compact = 600}, \texttt{medium = 840}) \& mốc nội dung nhóm chọn (\texttt{contentSplit = 500}, \texttt{minCardWidth = 250}).
+        \item \texttt{adaptive\_home\_screen.dart}:\\
+        Điều phối Macro 3 tầng (\texttt{MediaQuery}) \& Bắt phím tắt \texttt{Alt+1}, \texttt{Alt+2}.
+        \item \texttt{responsive\_content.dart}:\\
+        Điều phối Micro (\texttt{LayoutBuilder}) \& Tính số cột tự động.
+        \item \texttt{interactive\_item\_card.dart}:\\
+        Thẻ tương tác chuột (\texttt{MouseRegion}), chạm chuẩn công thái học (\texttt{kMinInteractiveDimension}).
+      \end{itemize}
+    \end{column}
+
+    \begin{column}{0.56\textwidth}
+      \centering
+      \small\textbf{Sơ đồ luồng quyết định 3 tầng (\textit{Decision Flowchart})}
+      \vskip 0.12cm
+      \begin{tikzpicture}[
+        node distance=0.8cm and 0.9cm, 
+        every node/.style={font=\tiny, align=center},
+        decision/.style={diamond, draw=blue!80!black, fill=blue!10, aspect=2, inner sep=1.2pt},
+        block/.style={rectangle, draw=black, fill=gray!10, rounded corners, minimum height=0.4cm},
+        outblock/.style={rectangle, draw=green!60!black, fill=green!10, rounded corners, minimum height=0.4cm}
+      ]
+        \node [block] (start) {Khởi chạy ứng dụng};
+        \node [decision, below=0.3cm of start] (mq) {Window Width?\\(MediaQuery.sizeOf)};
+        \node [outblock, left=0.4cm of mq] (bar) {$< 600$dp:\\NavigationBar (Đáy)};
+        \node [outblock, right=0.4cm of mq] (rail) {$\ge 600$dp:\\NavRail (Trái)\\(extended $\ge 840$dp)};
+        \node [block, below=0.55cm of mq] (lb) {LayoutBuilder đo không gian khả dụng\\(constraints.maxWidth trong Expanded)};
+        \node [decision, below=0.4cm of lb] (split) {maxWidth $\ge$ 500dp?};
+        \node [outblock, left=0.4cm of split] (list) {ListView (1 cột)\\\textbf{(Hoán đổi: Adaptive)}};
+        \node [outblock, right=0.4cm of split] (grid) {GridView đa cột\\\textbf{(Co dãn: Responsive)}};
+
+        \draw [thick, ->] (start) -- (mq);
+        \draw [thick, ->] (mq) -- (bar);
+        \draw [thick, ->] (mq) -- (rail);
+        \draw [thick, ->] (mq) -- (lb);
+        \draw [thick, ->] (bar) |- (lb);
+        \draw [thick, ->] (rail) |- (lb);
+        \draw [thick, ->] (lb) -- (split);
+        \draw [thick, ->] (split) -- node[above] {No} (list);
+        \draw [thick, ->] (split) -- node[above] {Yes} (grid);
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+  \vspace{0.15cm}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% SLIDE 12: PHÂN TÍCH CODE TRỌNG TÂM (1 PHÚT)
+% ------------------------------------------------------------------------------
+\begin{frame}[fragile]{Phân tích Mã nguồn Trọng tâm}
+  \vspace{-0.4cm}
+  \lstset{basicstyle=\ttfamily\fontsize{4.8pt}{5.3pt}\selectfont\color{black}, aboveskip=1pt, belowskip=1pt}
+  \begin{columns}[T]
+    \begin{column}{0.49\textwidth}
+      \textbf{\scriptsize 1. Thích ứng 3 cấp độ với MediaQuery.sizeOf (Adaptive Vĩ mô):}
+\begin{lstlisting}
+final Size size = MediaQuery.sizeOf(context);
+// M3 Window Size Classes: 600dp (Medium), 840dp (Expanded)
+final isWide = size.width >= AppBreakpoints.compactBreakpoint;
+final isExpanded = size.width >= AppBreakpoints.mediumBreakpoint;
+
+bottomNavigationBar: isWide ? null : NavigationBar(
+  destinations: [for (final i in _navItems)
+    NavigationDestination(...)],
+),
+body: Row(children: [
+  if (isWide) NavigationRail(
+    extended: isExpanded, // Mo rong (~256dp)
+    labelType: isExpanded ? NavigationRailLabelType.none
+                          : NavigationRailLabelType.all,
+    destinations: [for (final i in _navItems)
+      NavigationRailDestination(...)],
+  ),
+  Expanded(child: _selectedIndex == 0 
+      ? ResponsiveContent() : _buildDeviceSpecs()),
+]),
+\end{lstlisting}
+
+      \vskip 0.04cm
+      \textbf{\scriptsize 2. Bố cục Micro bằng LayoutBuilder (Adaptive + Responsive):}
+\begin{lstlisting}
+LayoutBuilder(builder: (context, constraints) {
+  final double w = constraints.maxWidth;
+  // Adaptive vi mo: Hoan doi ListView khi maxWidth < 500dp
+  if (w < AppBreakpoints.contentSplit) return _buildSingleColumnList();
+  // Responsive vi mo: Tinh cot theo minCardWidth (250dp)
+  return _buildMultiColumnGrid(w);
+});
+\end{lstlisting}
+    \end{column}
+
+    \begin{column}{0.49\textwidth}
+      \textbf{\scriptsize 3. Bắt phím tắt Windows (Keyboard Input):}
+\begin{lstlisting}
+CallbackShortcuts(
+  bindings: {
+    // Alt+1: Chuyen Tab Bo cuc; Alt+2: Chuyen Tab Thiet bi
+    const SingleActivator(LogicalKeyboardKey.digit1, alt: true): 
+      () => setState(() => _selectedIndex = 0),
+    const SingleActivator(LogicalKeyboardKey.digit2, alt: true): 
+      () => setState(() => _selectedIndex = 1),
+  },
+  child: Focus(autofocus: true, child: Scaffold(...)),
+)
+\end{lstlisting}
+
+      \vskip 0.04cm
+      \textbf{\scriptsize 4. Chuột \& Chốt công thái học (kMinInteractiveDimension):}
+\begin{lstlisting}
+MouseRegion(
+  cursor: SystemMouseCursors.click,
+  onEnter: (_) => setState(() => _isHovered = true),
+  onExit: (_) => setState(() => _isHovered = false),
+  child: ConstrainedBox(
+    // Bao ve vung tuong tac toi thieu >= 48dp chuan Material
+    constraints: const BoxConstraints(
+      minHeight: kMinInteractiveDimension,
+      minWidth: kMinInteractiveDimension,
+    ),
+    child: InkWell(onTap: () {}, child: ...),
+  ),
+)
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% SLIDE 13: KỊCH BẢN THỰC NGHIỆM & LIVE DEMO TRỰC TIẾP (BẢNG SỐ LIỆU ĐO THỰC TẾ)
+% ------------------------------------------------------------------------------
+\begin{frame}{Kịch bản Thực nghiệm \& Live Demo Trực tiếp}
+  \vspace{-0.2cm}
+  \centering
+  \footnotesize
+  \setlength{\tabcolsep}{4pt}
+  \arrayrulecolor{white}
+  \renewcommand{\arraystretch}{1.18}
+  % Sử dụng định dạng cột căn giữa và căn trái tự nhiên, triệt tiêu lỗi kéo giãn chữ
+  \begin{tabular}{|>{\centering\arraybackslash}p{2.3cm}|>{\centering\arraybackslash}p{2.4cm}|>{\centering\arraybackslash}p{1.4cm}|>{\raggedright\arraybackslash}p{6.4cm}|}
+    \hline
+    \rowcolor{TableHead}
+    \centering\color{white}\textbf{Chiều rộng cửa sổ} & 
+    \centering\color{white}\textbf{Vùng nội dung (Micro)} & 
+    \centering\color{white}\textbf{Lưới thẻ} & 
+    \centering\color{white}\textbf{Hiện tượng quan sát \& Bản chất kỹ thuật} \tabularnewline
+    \hline
+    \rowcolor{TableRowOdd}
+    $< 500\text{dp}$ & 
+    Bằng cửa sổ ($< 500\text{dp}$) & 
+    \textbf{1 cột} & 
+    \texttt{NavigationBar} ở đáy; \texttt{LayoutBuilder} chọn \textbf{\texttt{ListView} 1 cột} (Adaptive vi mô). \tabularnewline
+    \hline
+    \rowcolor{TableRowEven}
+    $500 - 599\text{dp}$ & 
+    Bằng cửa sổ ($500 - 599\text{dp}$) & 
+    \textbf{2 cột} & 
+    \texttt{NavigationBar} vẫn ở đáy, nhưng nội dung đã nhảy sang \textbf{\texttt{GridView} 2 cột}! \tabularnewline
+    \hline
+    \rowcolor{TableRowOdd}
+    $600 - 839\text{dp}$ & 
+    $\approx 519 - 758\text{dp}$ (trừ Rail $\approx 80$, Divider 1) & 
+    \textbf{2 $\rightarrow$ 3 cột} & 
+    Chuyển sang \texttt{NavigationRail} thu gọn bên trái. Tại $831 - 839\text{dp}$ vùng nội dung $\ge 750\text{dp} \rightarrow$ \textbf{Tăng lên 3 cột}. \tabularnewline
+    \hline
+    \rowcolor{TableRowEven}
+    \textbf{840dp (Mở rộng)} & 
+    \textbf{$\approx$ 583dp (trừ Rail $\approx$256, Divider 1)} & 
+    \textbf{Tụt về 2 cột!} & 
+    \textbf{Hiện tượng thực nghiệm quan trọng}: Cửa sổ to ra nhưng lưới bị thu hẹp! Chứng minh: \texttt{MediaQuery} thấy rộng hơn nhưng \texttt{LayoutBuilder} thấy hẹp lại do NavigationRail bung nhãn chữ chiếm chỗ. \tabularnewline
+    \hline
+    \rowcolor{TableRowOdd}
+    $\approx 1007\text{dp}$ & 
+    $\ge 750\text{dp}$ & 
+    \textbf{3 cột} & 
+    Không gian khả dụng vượt lại mốc 750dp, lưới tự động tăng lại lên 3 cột (Responsive vi mô). \tabularnewline
+    \hline
+    \rowcolor{TableRowEven}
+    $\ge 1257\text{dp}$ & 
+    $\ge 1000\text{dp}$ & 
+    \textbf{4 cột} & 
+    Vùng nội dung vượt 1000dp $\rightarrow$ Đạt tối đa 4 cột theo hàm \texttt{clamp(2, 4)}. \tabularnewline
+    \hline
+  \end{tabular}
+
+  \vspace{0.14cm}
+  \centering
+  \scriptsize
+  \textit{Thử nghiệm phím tắt:} Bấm \textbf{Alt+2} chuyển tức thì sang tab kiểm tra thông số thiết bị; bấm \textbf{Alt+1} quay lại tab bố cục.
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% SLIDE 14: TỔNG KẾT ĐỀ TÀI & HẠN CHẾ NGHIÊN CỨU (0.5 PHÚT)
+% ------------------------------------------------------------------------------
+\begin{frame}{Tổng kết Đề tài \& Hạn chế Nghiên cứu}
+  \vspace{-0.15cm}
+  \begin{columns}[T]
+    % Cột 1: Thông điệp then chốt
+    \begin{column}{0.485\textwidth}
+      \begin{beamercolorbox}[rounded=true, shadow=false, wd=\textwidth, sep=5.5pt]{block body}
+        \textbf{\normalsize\color{blue!80!black}1. Ba thông điệp then chốt}
+        \vskip 0.1cm
+        \footnotesize
+        $\bullet$ \textbf{Quy trình 3 bước chuẩn:}\\
+        \textbf{Abstract $\rightarrow$ Measure $\rightarrow$ Branch}. Đồng bộ cả cấp độ toàn cửa sổ (\textit{Scaffold}) lẫn vùng nội dung cục bộ (\textit{Content}).\\[0.16cm]
+        $\bullet$ \textbf{Đúng công cụ đo đạc:}\\
+        Dùng \texttt{sizeOf} cho toàn cửa sổ (tránh rebuild thừa) và \texttt{LayoutBuilder} đo không gian khả dụng thực tế.\\[0.16cm]
+        $\bullet$ \textbf{Đa dạng phương thức nhập liệu:}\\
+        Bảo vệ vùng chạm $\ge 48\times 48\text{dp}$ (\texttt{kMinInteractiveDimension}); tối ưu chuột (\texttt{compact}, hover) và phím tắt Desktop.
+      \end{beamercolorbox}
+    \end{column}
+
+    % Cột 2: Hạn chế & Mở rộng
+    \begin{column}{0.485\textwidth}
+      \begin{beamercolorbox}[rounded=true, shadow=false, wd=\textwidth, sep=5.5pt]{block body}
+        \textbf{\normalsize\color{blue!80!black}2. Hạn chế đề tài \& Hướng mở rộng}
+        \vskip 0.1cm
+        \footnotesize
+        $\bullet$ \textbf{Mốc ngắt nội dung:}\\
+        500dp và 250dp là mốc cố định theo thẻ demo; chưa đo kích thước nội dung thực tế (\textit{intrinsic size}) theo độ dài văn bản.\\[0.16cm]
+        $\bullet$ \textbf{Môi trường thực nghiệm:}\\
+        Tập trung phát triển và kiểm thử trên \textbf{Windows Desktop}; chưa kiểm thử trên màn hình cảm ứng vật lý thực tế.\\[0.16cm]
+        $\bullet$ \textbf{Ràng buộc lưới \& Trợ năng:}\\
+        \texttt{GridView} áp ràng buộc chặt (\textit{tight}) từ \texttt{childAspectRatio} nên \texttt{minHeight: 48} chỉ mang tính phòng vệ; chưa thử \texttt{textScaler}.
+      \end{beamercolorbox}
+    \end{column}
+  \end{columns}
+  \vspace{0.15cm}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% SLIDE 15: TÀI LIỆU THAM KHẢO (REFERENCES)
+% ------------------------------------------------------------------------------
+\begin{frame}{Tài liệu tham khảo (References)}
+  \vspace{-0.5cm}
+  \begin{enumerate}\setlength{\itemsep}{0pt}
+    \footnotesize
+    \item \textbf{Google Flutter Official Documentation:}\\
+    \textit{"Adaptive and responsive design in Flutter"} -- Hướng dẫn tổng quan về thiết kế giao diện đa nền tảng trong Flutter.\\
+    \url{https://docs.flutter.dev/ui/adaptive-responsive}
+
+    \item \textbf{Google Flutter Official Documentation:}\\
+    \textit{"General approach to adaptive apps"} -- Quy trình thiết kế 3 bước chuẩn: Abstract $\rightarrow$ Measure $\rightarrow$ Branch.\\
+    \url{https://docs.flutter.dev/ui/adaptive-responsive/general}
+
+    \item \textbf{Google Material Design 3 \& Android Developers Specifications:}\\
+    \textit{"Window size classes and canonical layouts"} -- Chuẩn phân loại kích thước cửa sổ theo chiều rộng và chiều cao (480/900dp).\\
+    \url{https://m3.material.io/foundations/layout/applying-layout/window-size-classes}\\
+    \url{https://developer.android.com/develop/adaptive-apps/guides/use-window-size-classes}
+
+    \item \textbf{Ethan Marcotte (2011) \& Aaron Gustafson (2011):}\\
+    \textit{"Responsive Web Design"} (Lưới co dãn -- Fluid Grid) \& \textit{"Adaptive Web Design"} (Tăng cường lũy tiến -- Progressive Enhancement theo thiết bị); kết hợp khái niệm bố cục thích ứng rời rạc (Discrete Layouts) phổ biến trong thiết kế web.
+
+    \item \textbf{Flutter Framework API Reference:}\\
+    Tài liệu kỹ thuật các lớp \texttt{MediaQuery}, \texttt{LayoutBuilder}, \texttt{VisualDensity}, \texttt{NavigationRail}, \texttt{CallbackShortcuts}.\\
+    \url{https://api.flutter.dev}
+
+    \item \textbf{Kho lưu trữ mã nguồn Đề tài (GitHub):}\\
+    \url{https://github.com/KhoaLe246205/cross-platform/tree/main/responsive_adaptive}
+  \end{enumerate}
+\end{frame}
+
+% ------------------------------------------------------------------------------
+% SLIDE 16: LỜI CẢM ƠN & PHIÊN PHẢN BIỆN (Q&A TÁCH RIÊNG ĐỒNG BỘ)
+% ------------------------------------------------------------------------------
+\begin{frame}[plain]
+  \centering
+  \vspace{1.8cm}
+  {\LARGE \textbf{XIN CHÂN THÀNH CẢM ƠN!}}\\[0.3cm]
+  {\large \textbf{QUÝ THẦY VÀ CÁC BẠN ĐÃ LẮNG NGHE}}\\[1.0cm]
+\end{frame}
+
+\end{document}
