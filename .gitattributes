@@ -1,0 +1,19 @@
+# ==============================================================================
+# GitHub Linguist Overrides
+# Thiết lập ngôn ngữ đại diện chính của repository là Dart
+# ==============================================================================
+
+# Loại trừ hoàn toàn các file TeX / Beamer LaTeX khỏi thống kê ngôn ngữ
+*.tex linguist-detectable=false
+*.tex linguist-documentation=true
+
+# Đánh dấu thư mục tài liệu & slide là Documentation
+**/docs/** linguist-documentation=true
+*.pdf linguist-documentation=true
+
+# Đánh dấu các mã nguồn wrapper mặc định của Flutter (Windows C++, Android) là Vendored
+**/windows/** linguist-vendored=true
+**/android/** linguist-vendored=true
+
+# Khẳng định nhận diện cho mã nguồn Dart
+*.dart linguist-detectable=true
