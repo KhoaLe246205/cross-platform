@@ -30,3 +30,21 @@ coverage/
 # System files
 .DS_Store
 Thumbs.db
+
+# Office documents
+*.docx
+*.pptx
+
+# TeX / LaTeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.nav
+*.out
+*.snm
+*.synctex.gz
+*.toc
+*.vrb
