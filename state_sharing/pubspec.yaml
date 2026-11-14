@@ -1,0 +1,23 @@
+name: state_sharing
+description: "Chuyen de 11: Chia se trang thai giua cac widget (State Sharing Between Widgets) - Cross-Platform Application Development"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.0.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/images/figures/
